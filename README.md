@@ -8,7 +8,7 @@ PHP7 FastCGI Server ( for KUSANAGI Runs on Docker )
 - Alpine Linux:3.10
 - PHP-7.2.19
 - apcu-1.0.5
-- apcu_bc-6.1.17
+- apcu_bc-5.1.17
 - sodium-2.0.20
 
 ## Image Content
