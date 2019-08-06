@@ -111,7 +111,7 @@ ENV PHP_LDFLAGS="-Wl,-O1 -Wl,--hash-style=both -pie"
 
 ENV GPG_KEYS CBAF69F173A0FEA4B537F470D66C9593118BCCB6 F38252826ACD957EF380D39F2F7956BC5DA04B5D
 
-ENV PHP_VERSION 7.3.7
+ENV PHP_VERSION 7.3.8
 ENV PHP_URL="https://www.php.net/get/php-${PHP_VERSION}.tar.xz/from/this/mirror" PHP_ASC_URL="https://www.php.net/get/php-${PHP_VERSION}.tar.xz.asc/from/this/mirror"
 ENV PHP_SHA256="eff09da83e235c2ba25c85deea1d4f663bd71d50fd51ad11e1acebe26d733494" PHP_MD5=""
 ENV PHP_INI_DIR /usr/local/etc/php
@@ -254,7 +254,7 @@ RUN if [ x${MICROSCANNER_TOKEN} != x ] ; then \
 	&& update-ca-certificates\
 	&& wget --no-check-certificate https://get.aquasec.com/microscanner \
 	&& chmod +x microscanner \
-	&& ./microscanner ${MICROSCANNER_TOKEN} || exit 1\
+	&& ./microscanner ${MICROSCANNER_TOKEN} --continue-on-failure \
 	&& rm ./microscanner \
 	&& apk del --purge .ca ;\
     fi
