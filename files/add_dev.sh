@@ -1,38 +1,32 @@
 #!
-apk update \
-&& apk add --update --no-cache --virtual .build-php \
-		$PHPIZE_DEPS \
-		build-base \
-		automake \
-		gettext \
-		libtool \
-		nasm \
-		mariadb \
-		mariadb-dev \
-		postgresql \
-		postgresql-dev \
-		gd-dev \
-		libpng-dev \
-		libwebp-dev \
-		libxpm-dev \
-		zlib-dev \
-		libzip-dev \
-		freetype-dev \
-		bzip2-dev \
-		libexif-dev \
-		xmlrpc-c-dev \
-		pcre-dev \
-		gettext-dev \
-		libxslt-dev \
-		pcre-dev \
-		openldap-dev \
-		imap-dev \
-		icu-dev \
-		curl \
-		imagemagick \
-		imagemagick-dev \
-		libsodium \
-		libsodium-dev \
-		gettext \
+apt-get update \
+&& apt-get install -y \
+$PHPIZE_DEPS \
+	automake \
+	gettext \
+	libtool \
+	nasm \
+	libmariadbclient-dev \
+	libpq-dev \
+	libgd-dev \
+	libpng-dev \
+	libwebp-dev \
+	libxpm-dev \
+	zlib1g-dev \
+	libzip-dev \
+	libfreetype6-dev \
+	libbz2-dev \
+	libexif-dev \
+	libxmlrpc-core-c3-dev \
+	libpcre3-dev \
+	libgettextpo-dev \
+	libxslt-dev \
+	libldap2-dev \
+	libc-client2007e-dev \
+	libkrb5-dev \
+	libicu-dev \
+	curl \
+	libmagick++-dev \
+	libsodium-dev \
 	&& :
 
