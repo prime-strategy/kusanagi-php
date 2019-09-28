@@ -2,12 +2,14 @@
 PHP7.1 FastCGI Server ( for KUSANAGI Runs on Docker )
 
 ## Versions(tags)
-- 7.1.32-r0
+- 7.1.32-r1
 
 ## Image Content
 - php-7.1.32-fpm-alpine3.10
 - apc_bc-5.1.17
 - acpu-1.0.5
+- msgpack-2.0.3
+- redis-5.0.2
 - sodium-2.0.20
 - ssh2-1.1.2(whith patch)
 - yaml-2.0.4
@@ -37,6 +39,7 @@ PHP7.1 FastCGI Server ( for KUSANAGI Runs on Docker )
 - ldap:7.1.32
 - libxml:2.9.9
 - mbstring:7.1.32
+- msgpack:2.0.3
 - mysqli:5.0.12-dev
 - mysqlnd:5.0.12-dev
 - openssl:1.1.1c
@@ -50,6 +53,7 @@ PHP7.1 FastCGI Server ( for KUSANAGI Runs on Docker )
 - Phar:2.0.2
 - posix:7.1.32
 - readline:7.1.32
+- redis:5.0.2
 - Reflection:7.1.32
 - session:7.1.32
 - SimpleXML:7.1.32
