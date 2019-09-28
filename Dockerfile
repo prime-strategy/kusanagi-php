@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP7 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=7.3.9
+ARG APP_VERSION=7.3.10
 ARG OS_VERSION=alpine3.10
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 MAINTAINER kusanagi@prime-strategy.co.jp
@@ -12,6 +12,9 @@ ARG APCU_BC_VERSION=1.0.5
 ARG MOZJPEG_VERSION=3.3.1
 ARG PECL_YAML_VERSION=2.0.4
 ARG PECL_SSH2_VERSION=1.1.2
+ARG PECL_MSGPACK_VERSION=2.0.3
+ARG PECL_REDIS_VERSION=5.0.2
+
 ARG EXTENSION_VERSION=20180731
 
 # add user
@@ -130,20 +133,28 @@ RUN apk update \
 	&& pecl install libsodium \
 	&& pecl download ssh2-$PECL_SSH2_VERSION \
 	&& tar xf ssh2-$PECL_SSH2_VERSION.tgz \
-	&& cd ssh2-$PECL_SSH2_VERSION \
+	&& (cd ssh2-$PECL_SSH2_VERSION \
 	&& patch -p1 < /tmp/remi_ssh2_php7_1.patch \
 	&& patch -p1 < /tmp/remi_ssh2_php7_2.patch \
 	&& phpize \ 
 	&& ./configure \
 	&& make \
-	&& make install \
-	&& cd .. \
+	&& make install ) \
 	&& rm -rf ssh2-$PECL_SSH2_VERSION.tgz ssh2-$PECL_SSH2_VERSION \
 	&& pecl install yaml-$PECL_YAML_VERSION \
 	&& pecl install apcu-$APCU_VERSION \
 	&& pecl install apcu_bc-$APCU_BC_VERSION \
+	&& pecl install msgpack-$PECL_MSGPACK_VERSION \
+	&& pecl download redis-$PECL_REDIS_VERSION \
+	&& tar xf redis-$PECL_REDIS_VERSION.tgz \
+	&& (cd redis-$PECL_REDIS_VERSION \
+	&& phpize \
+	&& ./configure  --enable-redis --enable-redis-msgpack --enable-redis-lzf \
+	&& make \
+	&& make install )\
+	&& rm -rf redis-$PECL_REDIS_VERSION.tgz redis-$PECL_REDIS_VERSION \
 	&& docker-php-source delete \
-	&& docker-php-ext-enable imagick sodium ssh2 yaml apcu apc \
+	&& docker-php-ext-enable imagick sodium ssh2 yaml apcu apc msgpack redis \
 	&& strip /usr/local/lib/php/extensions/no-debug-non-zts-${EXTENSION_VERSION}/*.so \
 	&& apk add --no-cache --virtual .gettext gettext \
 	&& mv /usr/bin/envsubst /tmp/ \
