@@ -2,12 +2,12 @@ alpine-baselayout-3.1.2-r0
 alpine-keys-2.1-r2
 apk-tools-2.10.4-r2
 busybox-1.30.1-r2
-c-client-2007f-r9
+c-client-2007f-r10
 ca-certificates-20190108-r0
 ca-certificates-cacert-20190108-r0
-curl-7.65.1-r0
+curl-7.66.0-r0
 db-5.3.28-r1
-expat-2.2.7-r0
+expat-2.2.8-r0
 fontconfig-2.13.1-r0
 freetype-2.10.0-r0
 imagemagick-libs-7.0.8.58-r0
@@ -16,8 +16,8 @@ lcms2-2.9-r1
 libbsd-0.9.1-r0
 libbz2-1.0.6-r7
 libc-utils-0.7.1-r0
-libcrypto1.1-1.1.1c-r0
-libcurl-7.65.1-r0
+libcrypto1.1-1.1.1d-r0
+libcurl-7.66.0-r0
 libedit-20190324.3.1-r0
 libgcrypt-1.8.4-r2
 libgpg-error-1.36-r2
@@ -32,7 +32,7 @@ libsasl-2.1.27-r3
 libsm-1.2.3-r0
 libsodium-1.0.18-r0
 libssh2-1.8.2-r1
-libssl1.1-1.1.1c-r0
+libssl1.1-1.1.1d-r0
 libtls-standalone-2.9.1-r0
 libuuid-2.33.2-r0
 libwebp-1.0.2-r0
@@ -51,7 +51,7 @@ ncurses-libs-6.1_p20190518-r0
 ncurses-terminfo-6.1_p20190518-r0
 ncurses-terminfo-base-6.1_p20190518-r0
 nghttp2-libs-1.39.2-r0
-openssl-1.1.1c-r0
+openssl-1.1.1d-r0
 optipng-0.7.7-r0
 pngquant-2.12.3-r0
 scanelf-1.2.3-r0
