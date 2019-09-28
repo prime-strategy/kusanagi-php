@@ -2,74 +2,78 @@
 PHP7.2 FastCGI Server ( for KUSANAGI Runs on Docker )
 
 ## Versions(tags)
-- 7.2.22-r0
+- 7.2.23-r0
 
 ## Image Content
-- php-7.2.22-fpm-alpine3.10
+- php-7.2.23-fpm-alpine3.10
 - apcu-1.0.5
 - apcu_bc-5.1.17
+- msgpack-2.0.3
+- redis-5.0.2
 - sodium-2.0.20
 - ssh2-1.1.2(with patch)
 - yaml-2.0.4
 
 ## Image Content
-- php:7.2.22
+- php:7.2.23
 - apc:5.1.17
 - apcu:1.0.5
-- bcmath:7.2.22
+- bcmath:7.2.23
 - bz2:1.0.6
-- calendar:7.2.22
-- ctype:7.2.22
+- calendar:7.2.23
+- ctype:7.2.23
 - curl:7.65.1
-- date:7.2.22
+- date:7.2.23
 - dom:20031129
-- exif:7.2.22
+- exif:7.2.23
 - fileinfo:1.0.5
-- filter:7.2.22
-- ftp:7.2.22
+- filter:7.2.23
+- ftp:7.2.23
 - gd:2.1.0
-- gettext:7.2.22
-- hash:7.2.22
-- iconv:7.2.22
+- gettext:7.2.23
+- hash:7.2.23
+- iconv:7.2.23
 - imagick:3.4.4
 - imap:2007f
 - json:1.6.0
-- ldap:7.2.22
+- ldap:7.2.23
 - libxml:2.9.9
-- mbstring:7.2.22
+- mbstring:7.2.23
+- msgpack:2.0.3
 - mysqli:5.0.12-dev
 - mysqlnd:5.0.12-dev
 - openssl:1.1.1c
-- pcntl:7.2.22
+- pcntl:7.2.23
 - pcre:8.41
-- PDO:7.2.22
+- PDO:7.2.23
 - pdo_mysql:5.0.12-dev
 - pdo_pgsql:11.3
 - pdo_sqlite:3.20.1
 - pgsql:11.3
 - Phar:2.0.2
-- posix:7.2.22
-- readline:7.2.22
-- Reflection:7.2.22
-- session:7.2.22
-- SimpleXML:7.2.22
-- soap:7.2.22
-- sockets:7.2.22
+- posix:7.2.23
+- readline:7.2.23
+- redis:5.0.2
+- Reflection:7.2.23
+- session:7.2.23
+- SimpleXML:7.2.23
+- soap:7.2.23
+- sockets:7.2.23
 - sodium:2.0.20
-- SPL:7.2.22
-- sqlite3:7.2.22
+- SPL:7.2.23
+- sqlite3:7.2.23
 - ssh2:1.1.2
-- standard:7.2.22
-- sysvsem:7.2.22
-- sysvshm:7.2.22
-- tokenizer:7.2.22
-- xml:7.2.22
-- xmlreader:7.2.22
-- xmlrpc:7.2.22
-- xmlwriter:7.2.22
+- standard:7.2.23
+- sysvsem:7.2.23
+- sysvshm:7.2.23
+- tokenizer:7.2.23
+- xml:7.2.23
+- xmlreader:7.2.23
+- xmlrpc:7.2.23
+- xmlwriter:7.2.23
 - xsl:1.1.33
 - yaml: 2.0.4
 - zip:1.15.4
 - zlib:1.2.11
-- Zend OPcache:7.2.22
+- Zend OPcache:7.2.23
 
