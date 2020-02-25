@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP7 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=7.2.26
+ARG APP_VERSION=7.3.13
 ARG OS_VERSION=alpine3.10
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 MAINTAINER kusanagi@prime-strategy.co.jp
@@ -15,7 +15,7 @@ ARG PECL_SSH2_VERSION=1.1.2
 ARG PECL_MSGPACK_VERSION=2.0.3
 ARG PECL_REDIS_VERSION=5.0.2
 
-ARG EXTENSION_VERSION=20170718
+ARG EXTENSION_VERSION=20180731
 
 # add user
 RUN : \
@@ -100,7 +100,7 @@ RUN apk update \
 		/tmp \
 	&& cp /usr/bin/mogrify /tmp \
 \
-# PHP7.2
+# PHP7.3
 \
 	&& pecl channel-update pecl.php.net \
 	&& docker-php-ext-configure gd --with-jpeg-dir=/usr/include \
