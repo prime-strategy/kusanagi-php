@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP7 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=7.3.13
+ARG APP_VERSION=7.4.1
 ARG OS_VERSION=alpine3.10
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 MAINTAINER kusanagi@prime-strategy.co.jp
@@ -15,7 +15,7 @@ ARG PECL_SSH2_VERSION=1.1.2
 ARG PECL_MSGPACK_VERSION=2.0.3
 ARG PECL_REDIS_VERSION=5.0.2
 
-ARG EXTENSION_VERSION=20180731
+ARG EXTENSION_VERSION=20190902
 
 # add user
 RUN : \
@@ -77,6 +77,9 @@ RUN apk update \
 		sqlite-dev \
 		yaml-dev \
 		libssh2-dev \
+		libgcrypt-dev \
+		libgpg-error-dev \
+		tidyhtml-dev \
 	&& cd /tmp \
 # mozjpeg
 	&& curl -LO https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz#//mozjpeg-${MOZJPEG_VERSION}.tar.gz \
@@ -100,12 +103,13 @@ RUN apk update \
 		/tmp \
 	&& cp /usr/bin/mogrify /tmp \
 \
-# PHP7.3
+# PHP7.4
 \
 	&& pecl channel-update pecl.php.net \
-	&& docker-php-ext-configure gd --with-jpeg-dir=/usr/include \
-		--with-xpm-dir=/usr/include --with-webp-dir=/usr/include \
-		--with-png-dir=/usr/include --with-freetype-dir=/usr/include/ \
+	&& docker-php-ext-configure gd \
+		--with-webp \
+		--with-jpeg \
+		--with-xpm \
 	&& docker-php-ext-install \
 		mysqli \
 		pgsql \
@@ -129,6 +133,7 @@ RUN apk update \
 		sysvshm \
 		xmlrpc \
 		xsl \
+		tidy \
 	&& pecl install imagick \
 	&& pecl install libsodium \
 	&& pecl download ssh2-$PECL_SSH2_VERSION \
