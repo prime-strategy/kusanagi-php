@@ -72,6 +72,7 @@ PHP7.3 FastCGI Server ( for KUSANAGI Runs on Docker )
 - xmlrpc:7.3.15
 - xmlwriter:7.3.15
 - xsl:1.1.33
+- yaml: 2.0.4
 - zip:1.15.4
 - zlib:1.2.11
 - Zend OPcache:7.3.15
