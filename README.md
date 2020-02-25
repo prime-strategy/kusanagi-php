@@ -1,14 +1,13 @@
 # kusanagi-php7
-PHP7.3 FastCGI Server ( for KUSANAGI Runs on Docker )
+PHP7.2 FastCGI Server ( for KUSANAGI Runs on Docker )
 
 ## Versions(tags)
-- latest
-- php-7.3.15
+- 7.2.28-r0
 
 ## Image Content
-- php-7.3.15-fpm-alpine3.11
-- apc_bc-5.1.17
-- acpu-1.0.5
+- php-7.2.28-fpm-alpine3.10
+- apcu-1.0.5
+- apcu_bc-5.1.17
 - msgpack-2.0.3
 - redis-5.0.2
 - sodium-2.0.20
@@ -16,63 +15,61 @@ PHP7.3 FastCGI Server ( for KUSANAGI Runs on Docker )
 - yaml-2.0.4
 
 ## Image Content
-- php:7.3.15
+- php:7.2.28
 - apc:5.1.17
 - apcu:1.0.5
-- bcmath:7.3.15
+- bcmath:7.2.28
 - bz2:1.0.6
-- calendar:7.3.15
-- ctype:7.3.15
+- calendar:7.2.28
+- ctype:7.2.28
 - curl:7.65.1
-- date:7.3.15
+- date:7.2.28
 - dom:20031129
-- exif:7.3.15
+- exif:7.2.28
 - fileinfo:1.0.5
-- filter:7.3.15
-- ftp:7.3.15
+- filter:7.2.28
+- ftp:7.2.28
 - gd:2.1.0
-- gettext:7.3.15
-- hash:7.3.15
-- iconv:7.3.15
+- gettext:7.2.28
+- hash:7.2.28
+- iconv:7.2.28
 - imagick:3.4.4
 - imap:2007f
 - json:1.6.0
-- ldap:7.3.15
+- ldap:7.2.28
 - libxml:2.9.9
-- mbstring:7.3.15
+- mbstring:7.2.28
 - msgpack:2.0.3
 - mysqli:5.0.12-dev
 - mysqlnd:5.0.12-dev
 - openssl:1.1.1c
-- pcntl:7.3.15
+- pcntl:7.2.28
 - pcre:8.41
-- PDO:7.3.15
+- PDO:7.2.28
 - pdo_mysql:5.0.12-dev
 - pdo_pgsql:11.3
 - pdo_sqlite:3.20.1
 - pgsql:11.3
 - Phar:2.0.2
-- posix:7.3.15
-- readline:7.3.15
+- posix:7.2.28
+- readline:7.2.28
 - redis:5.0.2
-- Reflection:7.3.15
-- session:7.3.15
-- SimpleXML:7.3.15
-- soap:7.3.15
-- sockets:7.3.15
+- Reflection:7.2.28
+- session:7.2.28
+- SimpleXML:7.2.28
+- soap:7.2.28
+- sockets:7.2.28
 - sodium:2.0.20
-- SPL:7.3.15
-- sqlite3:7.3.15
-- standard:7.3.15
-- sysvsem:7.3.15
-- sysvshm:7.3.15
-- tokenizer:7.3.15
-- xml:7.3.15
-- xmlreader:7.3.15
-- xmlrpc:7.3.15
-- xmlwriter:7.3.15
-- xsl:1.1.33
-- zip:1.15.4
-- zlib:1.2.11
-- Zend OPcache:7.3.15
+- SPL:7.2.28
+- sqlite3:7.2.28
+- ssh2:1.1.2
+- standard:7.2.28
+- sysvsem:7.2.28
+- sysvshm:7.2.28
+- tokenizer:7.2.28
+- xml:7.2.28
+- xmlreader:7.2.28
+- xmlrpc:7.2.28
+- xmlwriter:7.2.28
+- Zend OPcache:7.2.28
 
