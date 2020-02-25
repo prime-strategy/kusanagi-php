@@ -1,8 +1,8 @@
 #//----------------------------------------------------------------------------
 #// PHP7 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=7.4.1
-ARG OS_VERSION=alpine3.10
+ARG APP_VERSION=7.3.15
+ARG OS_VERSION=alpine3.11
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 MAINTAINER kusanagi@prime-strategy.co.jp
 
@@ -11,9 +11,9 @@ ARG APCU_VERSION=5.1.18
 ARG APCU_BC_VERSION=1.0.5
 ARG MOZJPEG_VERSION=3.3.1
 ARG PECL_YAML_VERSION=2.0.4
-ARG PECL_SSH2_VERSION=1.1.2
+ARG PECL_SSH2_VERSION=1.2
 ARG PECL_MSGPACK_VERSION=2.0.3
-ARG PECL_REDIS_VERSION=5.0.2
+ARG PECL_REDIS_VERSION=5.1.1
 
 ARG EXTENSION_VERSION=20190902
 
@@ -29,9 +29,6 @@ RUN : \
 	&& chmod 755 /home/kusanagi \
 	&& apk del --purge .user \
 	&& :
-
-COPY files/remi_ssh2_php7_a8835aab2c15e794fce13bd927295719e384ad2d.patch /tmp/remi_ssh2_php7_1.patch
-COPY files/remi_ssh2_php7_073067ba96ac99ed5696d27f13ca6c8124986e74.patch /tmp/remi_ssh2_php7_2.patch
 
 RUN apk update \
 	&& apk add --update --no-cache --virtual .build-php \
@@ -139,8 +136,6 @@ RUN apk update \
 	&& pecl download ssh2-$PECL_SSH2_VERSION \
 	&& tar xf ssh2-$PECL_SSH2_VERSION.tgz \
 	&& (cd ssh2-$PECL_SSH2_VERSION \
-	&& patch -p1 < /tmp/remi_ssh2_php7_1.patch \
-	&& patch -p1 < /tmp/remi_ssh2_php7_2.patch \
 	&& phpize \ 
 	&& ./configure \
 	&& make \
