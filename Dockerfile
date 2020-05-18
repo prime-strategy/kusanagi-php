@@ -135,6 +135,7 @@ RUN apk update \
 	&& ./configure \
 	&& make \
 	&& make install ) \
+	&& rm -rf libsodium-$PECL_SODIUM_VERSION.tgz libsodium-$PECL_SODIUM_VERSION \
 	&& pecl download ssh2-$PECL_SSH2_VERSION \
 	&& tar xf ssh2-$PECL_SSH2_VERSION.tgz \
 	&& (cd ssh2-$PECL_SSH2_VERSION \
