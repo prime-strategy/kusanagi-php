@@ -2,10 +2,10 @@
 PHP7.3 FastCGI Server ( for KUSANAGI Runs on Docker )
 
 ## Versions(tags)
-- php-7.3.18
+- php-7.3.19
 
 ## Image Content
-- php-7.3.18-fpm-alpine3.11
+- php-7.3.19-fpm-alpine3.12
 - apc_bc-5.1.18
 - acpu-1.0.5
 - msgpack-2.1.0
@@ -15,58 +15,58 @@ PHP7.3 FastCGI Server ( for KUSANAGI Runs on Docker )
 - yaml-2.1.0
 
 ## Image Content
-- php:7.3.18
-- bcmath:7.3.18
+- php:7.3.19
+- bcmath:7.3.19
 - bz2:1.0.6
-- calendar:7.3.18
-- ctype:7.3.18
+- calendar:7.3.19
+- ctype:7.3.19
 - curl:7.65.1
-- date:7.3.18
+- date:7.3.19
 - dom:20031129
-- exif:7.3.18
+- exif:7.3.19
 - fileinfo:1.0.5
-- filter:7.3.18
-- ftp:7.3.18
+- filter:7.3.19
+- ftp:7.3.19
 - gd:2.1.0
-- gettext:7.3.18
-- hash:7.3.18
-- iconv:7.3.18
+- gettext:7.3.19
+- hash:7.3.19
+- iconv:7.3.19
 - imagick:3.4.4
 - imap:2007f
 - json:1.6.0
-- ldap:7.3.18
+- ldap:7.3.19
 - libxml:2.9.9
-- mbstring:7.3.18
+- mbstring:7.3.19
 - mysqli:5.0.12-dev
 - mysqlnd:5.0.12-dev
 - openssl:1.1.1c
-- pcntl:7.3.18
+- pcntl:7.3.19
 - pcre:8.41
-- PDO:7.3.18
+- PDO:7.3.19
 - pdo_mysql:5.0.12-dev
 - pdo_pgsql:11.3
 - pdo_sqlite:3.20.1
 - pgsql:11.3
 - Phar:2.0.2
-- posix:7.3.18
-- readline:7.3.18
-- Reflection:7.3.18
-- session:7.3.18
-- SimpleXML:7.3.18
-- soap:7.3.18
-- sockets:7.3.18
-- SPL:7.3.18
-- sqlite3:7.3.18
-- standard:7.3.18
-- sysvsem:7.3.18
-- sysvshm:7.3.18
-- tokenizer:7.3.18
-- xml:7.3.18
-- xmlreader:7.3.18
-- xmlrpc:7.3.18
-- xmlwriter:7.3.18
+- posix:7.3.19
+- readline:7.3.19
+- Reflection:7.3.19
+- session:7.3.19
+- SimpleXML:7.3.19
+- soap:7.3.19
+- sockets:7.3.19
+- SPL:7.3.19
+- sqlite3:7.3.19
+- standard:7.3.19
+- sysvsem:7.3.19
+- sysvshm:7.3.19
+- tokenizer:7.3.19
+- xml:7.3.19
+- xmlreader:7.3.19
+- xmlrpc:7.3.19
+- xmlwriter:7.3.19
 - xsl:1.1.33
 - zip:1.15.4
 - zlib:1.2.11
-- Zend OPcache:7.3.18
+- Zend OPcache:7.3.19
 
