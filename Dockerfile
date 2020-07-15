@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP7 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=7.4.7
+ARG APP_VERSION=7.4.8
 ARG OS_VERSION=alpine3.12
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 MAINTAINER kusanagi@prime-strategy.co.jp
@@ -14,7 +14,7 @@ ARG PECL_SODIUM_VERSION=2.0.22
 ARG PECL_YAML_VERSION=2.1.0
 ARG PECL_SSH2_VERSION=1.2
 ARG PECL_MSGPACK_VERSION=2.1.0
-ARG PECL_REDIS_VERSION=5.2.2
+ARG PECL_REDIS_VERSION=5.3.1
 
 
 ARG EXTENSION_VERSION=20190902
@@ -79,6 +79,7 @@ RUN apk update \
 		libgcrypt-dev \
 		libgpg-error-dev \
 		tidyhtml-dev \
+        libffi-dev \
 	&& cd /tmp \
 # mozjpeg
 	&& curl -LO https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz#//mozjpeg-${MOZJPEG_VERSION}.tar.gz \
@@ -133,6 +134,7 @@ RUN apk update \
 		xmlrpc \
 		xsl \
 		tidy \
+        ffi \
 	&& pecl install imagick \
 	&& pecl download libsodium-$PECL_SODIUM_VERSION \
 	&& tar xf libsodium-$PECL_SODIUM_VERSION.tgz \
