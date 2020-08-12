@@ -21,6 +21,10 @@ RUN : \
     && dnf install -y kusanagi-php74-${APP_VERSION} \
     && dnf clean all \
     && rm -rf /var/cache/dnf/* \
+    && chown httpd:www -R /var/opt/kusanagi \
+    && sed -i -e 's|^error_log =.*$|error_log = /dev/stderr|' /etc/opt/kusanagi/php-fpm.conf \
+    && sed -i -e 's|^slowlog =.*$|slowlog = /dev/stderr|' \
+        -e 's|php_admin_value\[error_log\] =.*$|php_admin_value[error_log] = /dev/stderr|' /etc/opt/kusanagi/php-fpm.d/www.conf \
     && :
 
 # COPY files/docker-entrypoint.sh /usr/local/bin
