@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP7 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=7.4.11
+ARG APP_VERSION=7.4.12
 ARG OS_VERSION=alpine3.12
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 MAINTAINER kusanagi@prime-strategy.co.jp
@@ -217,17 +217,6 @@ COPY files/php7-fpm.conf /usr/local/etc/php-fpm.conf
 COPY files/php.ini-production /usr/local/etc/php.conf
 COPY files/docker-entrypoint.sh /usr/local/bin
 RUN chown -R httpd:www /usr/local/etc
-
-ARG MICROSCANNER_TOKEN
-RUN if [ x${MICROSCANNER_TOKEN} != x ] ; then \
-	apk add --no-cache --virtual .ca ca-certificates \
-	&& update-ca-certificates\
-	&& wget --no-check-certificate https://get.aquasec.com/microscanner \
-	&& chmod +x microscanner \
-	&& ./microscanner ${MICROSCANNER_TOKEN} || exit 1 \
-	&& rm ./microscanner \
-	&& apk del --purge .ca ;\
-	fi
 
 USER httpd
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
