@@ -6,7 +6,7 @@ PHP7.2 FastCGI Server ( for KUSANAGI Runs on Docker )
 
 ## Image Content
 - php-7.2.34-fpm-alpine3.12
-- apcu-5.1.18
+- apcu-5.1.19
 - apcu_bc-1.0.5
 - msgpack-2.1.1
 - redis-5.3.1

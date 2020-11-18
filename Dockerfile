@@ -7,7 +7,7 @@ FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 MAINTAINER kusanagi@prime-strategy.co.jp
 
 # Environment variable
-ARG APCU_VERSION=5.1.18
+ARG APCU_VERSION=5.1.19
 ARG APCU_BC_VERSION=1.0.5
 ARG MOZJPEG_VERSION=3.3.1
 ARG PECL_YAML_VERSION=2.1.0
@@ -209,17 +209,6 @@ COPY files/php7-fpm.conf /usr/local/etc/php-fpm.conf
 COPY files/php.ini-production /usr/local/etc/php.conf
 COPY files/docker-entrypoint.sh /usr/local/bin
 RUN chown -R httpd:www /usr/local/etc
-
-ARG MICROSCANNER_TOKEN
-RUN if [ x${MICROSCANNER_TOKEN} != x ] ; then \
-	apk add --no-cache --virtual .ca ca-certificates \
-	&& update-ca-certificates\
-	&& wget --no-check-certificate https://get.aquasec.com/microscanner \
-	&& chmod +x microscanner \
-	&& ./microscanner ${MICROSCANNER_TOKEN} || exit 1 \
-	&& rm ./microscanner \
-	&& apk del --purge .ca ;\
-	fi
 
 USER httpd
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
