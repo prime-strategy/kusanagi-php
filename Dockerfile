@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP7 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=7.3.24
+ARG APP_VERSION=7.3.25
 ARG OS_VERSION=alpine3.12
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 MAINTAINER kusanagi@prime-strategy.co.jp
@@ -11,12 +11,19 @@ ARG APCU_VERSION=5.1.19
 ARG APCU_BC_VERSION=1.0.5
 ARG MOZJPEG_VERSION=3.3.1
 ARG PECL_SODIUM_VERSION=2.0.22
-ARG PECL_YAML_VERSION=2.1.0
+ARG PECL_YAML_VERSION=2.2.0
 ARG PECL_SSH2_VERSION=1.2
-ARG PECL_MSGPACK_VERSION=2.1.1
-ARG PECL_REDIS_VERSION=5.3.1
+ARG PECL_MSGPACK_VERSION=2.1.2
+ARG PECL_REDIS_VERSION=5.3.2
 
 ARG EXTENSION_VERSION=20180731
+
+COPY files/*.ini /usr/local/etc/php/conf.d/
+COPY files/opcache*.blacklist /usr/local/etc/php.d/
+COPY files/www.conf /usr/local/etc/php-fpm.d/www.conf.template
+COPY files/php7-fpm.conf /usr/local/etc/php-fpm.conf
+COPY files/php.ini-production /usr/local/etc/php.conf
+COPY files/docker-entrypoint.sh /usr/local/bin
 
 # add user
 RUN : \
@@ -188,9 +195,7 @@ RUN apk update \
 	&& mkdir -p /var/log/php7-fpm \
 	&& ln -sf /dev/stdout /var/log/php7-fpm/www-error.log \
 	&& ln -sf /dev/stderr /var/log/php7-fpm/www-slow.log \
-	&& :
-
-RUN	mkdir -p /var/lib/php7/session /var/lib/php7/wsdlcache  \
+    && mkdir -p /var/lib/php7/session /var/lib/php7/wsdlcache  \
 	&& chown httpd:www /var/lib/php7/session /var/lib/php7/wsdlcache \
 	&& echo mysqli.default_socket=/var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-mysqli.ini \
 	&& echo pdo_mysql.default_socket = /var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-pdo_mysql.ini \
@@ -200,15 +205,14 @@ RUN	mkdir -p /var/lib/php7/session /var/lib/php7/wsdlcache  \
 	&& sha3sum installer.sha384sum \
 	&& php installer --filename=composer --install-dir=/usr/local/bin \
 	&& rm installer installer.sha384sum \
+    && chown -R httpd:www /usr/local/etc \
 	&& :
 
-COPY files/*.ini /usr/local/etc/php/conf.d/
-COPY files/opcache*.blacklist /usr/local/etc/php.d/
-COPY files/www.conf /usr/local/etc/php-fpm.d/www.conf.template
-COPY files/php7-fpm.conf /usr/local/etc/php-fpm.conf
-COPY files/php.ini-production /usr/local/etc/php.conf
-COPY files/docker-entrypoint.sh /usr/local/bin
-RUN chown -R httpd:www /usr/local/etc
+RUN apk add --no-cache --virtual .curl curl \
+    && curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/master/contrib/install.sh | sh -s -- -b /usr/local/bin \
+    && trivy filesystem --exit-code 1 --no-progress / \
+    && apk del .curl \
+    && :
 
 USER httpd
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
