@@ -31,7 +31,15 @@ RUN : \
 	&& apk del --purge .user \
 	&& :
 
+COPY files/*.ini /usr/local/etc/php/conf.d/
+COPY files/opcache*.blacklist /usr/local/etc/php.d/
+COPY files/www.conf /usr/local/etc/php-fpm.d/www.conf.template
+COPY files/php7-fpm.conf /usr/local/etc/php-fpm.conf
+COPY files/php.ini-production /usr/local/etc/php.conf
+COPY files/docker-entrypoint.sh /usr/local/bin
+
 RUN apk update \
+    && apk upgrade musl-tools \
 	&& apk add --update --no-cache --virtual .build-php \
 		$PHPIZE_DEPS \
 		build-base \
@@ -188,9 +196,7 @@ RUN apk update \
 	&& mkdir -p /var/log/php7-fpm \
 	&& ln -sf /dev/stdout /var/log/php7-fpm/www-error.log \
 	&& ln -sf /dev/stderr /var/log/php7-fpm/www-slow.log \
-	&& :
-
-RUN	mkdir -p /var/lib/php7/session /var/lib/php7/wsdlcache  \
+    &&mkdir -p /var/lib/php7/session /var/lib/php7/wsdlcache  \
 	&& chown httpd:www /var/lib/php7/session /var/lib/php7/wsdlcache \
 	&& echo mysqli.default_socket=/var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-mysqli.ini \
 	&& echo pdo_mysql.default_socket = /var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-pdo_mysql.ini \
@@ -200,15 +206,14 @@ RUN	mkdir -p /var/lib/php7/session /var/lib/php7/wsdlcache  \
 	&& sha3sum installer.sha384sum \
 	&& php installer --filename=composer --install-dir=/usr/local/bin \
 	&& rm installer installer.sha384sum \
-	&& :
+    && chown -R httpd:www /usr/local/etc \
+    && :
 
-COPY files/*.ini /usr/local/etc/php/conf.d/
-COPY files/opcache*.blacklist /usr/local/etc/php.d/
-COPY files/www.conf /usr/local/etc/php-fpm.d/www.conf.template
-COPY files/php7-fpm.conf /usr/local/etc/php-fpm.conf
-COPY files/php.ini-production /usr/local/etc/php.conf
-COPY files/docker-entrypoint.sh /usr/local/bin
-RUN chown -R httpd:www /usr/local/etc
+RUN apk add --no-cache --virtual .curl curl \
+    && curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/master/contrib/install.sh | sh -s -- -b /usr/local/bin \
+    && trivy filesystem --exit-code 1 --no-progress / \
+    && apk del .curl \
+    && :
 
 USER httpd
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
