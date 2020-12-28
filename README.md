@@ -3,17 +3,17 @@ PHP7.4 FastCGI Server ( for KUSANAGI Runs on Docker )
 
 ## Versions(tags)
 - latest
-- php-7.4.13
+- php-7.4.13-r1
 
 ## Image Content
 - php-7.4.13-fpm-alpine3.12
 - acpu-5.1.19
 - apc_bc-1.0.5
 - msgpack-2.1.2
-- redis-5.3.1
-- sodium-2.0.22
+- redis-5.3.2
+- sodium-2.0.23
 - ssh2-1.2
-- yaml-2.2.0
+- yaml-2.2.1
 
 ## Image Content
 - php:7.4.13
