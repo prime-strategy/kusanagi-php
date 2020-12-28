@@ -10,9 +10,9 @@ PHP7.3 FastCGI Server ( for KUSANAGI Runs on Docker )
 - apc_bc-1.0.5
 - msgpack-2.1.2
 - redis-5.3.1
-- sodium-2.0.22
+- sodium-2.0.23
 - ssh2-1.2
-- yaml-2.2.0
+- yaml-2.2.1
 
 ## Image Content
 - php:7.3.25
