@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP7 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=7.4.13
+ARG APP_VERSION=7.4.14
 ARG OS_VERSION=alpine3.12
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 MAINTAINER kusanagi@prime-strategy.co.jp
@@ -9,7 +9,7 @@ MAINTAINER kusanagi@prime-strategy.co.jp
 # Environment variable
 ARG APCU_VERSION=5.1.19
 ARG APCU_BC_VERSION=1.0.5
-ARG MOZJPEG_VERSION=3.3.1
+ARG MOZJPEG_VERSION=4.0.0
 ARG PECL_SODIUM_VERSION=2.0.23
 ARG PECL_YAML_VERSION=2.2.1
 ARG PECL_SSH2_VERSION=1.2
@@ -43,6 +43,7 @@ RUN apk update \
 		$PHPIZE_DEPS \
 		build-base \
 		automake \
+        cmake \
 		gettext \
 		libtool \
 		nasm \
@@ -91,9 +92,10 @@ RUN apk update \
 	&& curl -LO https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz#//mozjpeg-${MOZJPEG_VERSION}.tar.gz \
 	&& tar xf mozjpeg-${MOZJPEG_VERSION}.tar.gz \
 	&& cd mozjpeg-${MOZJPEG_VERSION} \
-	&& autoreconf -fiv \
 	&& mkdir build && cd build \
-	&& sh ../configure --with-jpeg8 --prefix=/usr \
+    && cmake -DCMAKE_INSTALL_PREFIX=/usr -DPNG_SUPPORTED=FALSE -DWITH_MEM_SRCDST=TRUE -DWITH_JPEG8=TRUE .. \
+    && make install \
+    && ls -l /usr/lib/libjpeg* \
 	&& make -j$(getconf _NPROCESSORS_ONLN) install \
 	&& strip \
 		/usr/bin/wrjpgcom \
@@ -102,10 +104,10 @@ RUN apk update \
 		/usr/bin/jpegtran \
 		/usr/bin/djpeg \
 		/usr/bin/tjbench \
-		/usr/lib/libturbojpeg.so.0.1.0 \
-		/usr/lib/libjpeg.so.8.1.2 \
-	&& cp /usr/lib/libturbojpeg.so.0.1.0 \
-		/usr/lib/libjpeg.so.8.1.2 \
+		/usr/lib/libturbojpeg.so.0.2.0 \
+		/usr/lib/libjpeg.so.8.2.2 \
+	&& cp /usr/lib/libturbojpeg.so.0.2.0 \
+		/usr/lib/libjpeg.so.8.2.2 \
 		/tmp \
 	&& cp /usr/bin/mogrify /tmp \
 \
@@ -195,7 +197,7 @@ RUN apk update \
 	&& rm -rf /tmp/mozjpeg* /tmp/pear /usr/include /usr/lib/pkgconfig /usr/lib/*a /usr/share/doc /usr/share/man \
 	&& apk add pngquant optipng jpegoptim ssmtp \
 	&& chown httpd /etc/ssmtp /etc/ssmtp/ssmtp.conf \
-	&& mv /tmp/libturbojpeg.so.0.1.0 /tmp/libjpeg.so.8.1.2 /usr/lib \
+	&& mv /tmp/libturbojpeg.so.0.2.0 /tmp/libjpeg.so.8.2.2 /usr/lib \
 	&& mkdir -p /etc/php7.d/conf.d /etc/php7-fpm.d \
 	&& cp /usr/local/etc/php/conf.d/* /etc/php7.d/conf.d/ \
 	&& cp /usr/local/etc/php-fpm.d/* /etc/php7-fpm.d/ \
