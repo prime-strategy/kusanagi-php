@@ -1,29 +1,30 @@
 #//----------------------------------------------------------------------------
-#// PHP7 FastCGI Server ( for KUSANAGI Runs on Docker )
+#// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=7.4.13
+ARG APP_VERSION=8.0.0
 ARG OS_VERSION=alpine3.12
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 MAINTAINER kusanagi@prime-strategy.co.jp
 
 # Environment variable
 ARG APCU_VERSION=5.1.19
-ARG APCU_BC_VERSION=1.0.5
-ARG MOZJPEG_VERSION=3.3.1
-ARG PECL_SODIUM_VERSION=2.0.22
-ARG PECL_YAML_VERSION=2.2.0
+ARG MOZJPEG_VERSION=4.0.0
+ARG PECL_SODIUM_VERSION=2.0.23
+ARG PECL_YAML_VERSION=2.2.1
 ARG PECL_SSH2_VERSION=1.2
 ARG PECL_MSGPACK_VERSION=2.1.2
-ARG PECL_REDIS_VERSION=5.3.1
+ARG PECL_REDIS_VERSION=5.3.2
+ARG PECL_XMLRPC_VERSION=1.0.0RC1
 
-ARG EXTENSION_VERSION=20190902
+ARG EXTENSION_VERSION=20200930
 
 COPY files/*.ini /usr/local/etc/php/conf.d/
 COPY files/opcache*.blacklist /usr/local/etc/php.d/
 COPY files/www.conf /usr/local/etc/php-fpm.d/www.conf.template
-COPY files/php7-fpm.conf /usr/local/etc/php-fpm.conf
+COPY files/php-fpm.conf /usr/local/etc/php-fpm.conf
 COPY files/php.ini-production /usr/local/etc/php.conf
 COPY files/docker-entrypoint.sh /usr/local/bin
+COPY files/pecl-ssh2-php8-issue.patch /tmp
 
 # add user
 RUN : \
@@ -43,6 +44,7 @@ RUN apk update \
 		$PHPIZE_DEPS \
 		build-base \
 		automake \
+        cmake \
 		gettext \
 		libtool \
 		nasm \
@@ -91,10 +93,10 @@ RUN apk update \
 	&& curl -LO https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz#//mozjpeg-${MOZJPEG_VERSION}.tar.gz \
 	&& tar xf mozjpeg-${MOZJPEG_VERSION}.tar.gz \
 	&& cd mozjpeg-${MOZJPEG_VERSION} \
-	&& autoreconf -fiv \
 	&& mkdir build && cd build \
-	&& sh ../configure --with-jpeg8 --prefix=/usr \
-	&& make -j$(getconf _NPROCESSORS_ONLN) install \
+    && cmake -DCMAKE_INSTALL_PREFIX=/usr -DPNG_SUPPORTED=FALSE -DWITH_MEM_SRCDST=TRUE .. \
+    && make install \
+    && ls -l /usr/lib/libjpeg* \
 	&& strip \
 		/usr/bin/wrjpgcom \
 		/usr/bin/rdjpgcom \
@@ -102,14 +104,14 @@ RUN apk update \
 		/usr/bin/jpegtran \
 		/usr/bin/djpeg \
 		/usr/bin/tjbench \
-		/usr/lib/libturbojpeg.so.0.1.0 \
-		/usr/lib/libjpeg.so.8.1.2 \
-	&& cp /usr/lib/libturbojpeg.so.0.1.0 \
-		/usr/lib/libjpeg.so.8.1.2 \
+		/usr/lib64/libturbojpeg.so.0.2.0 \
+        /usr/lib64/libjpeg.so.62.3.0 \
+	&& cp /usr/lib64/libturbojpeg.so.0.2.0 \
+        /usr/lib64/libjpeg.so.62.3.0 \
 		/tmp \
 	&& cp /usr/bin/mogrify /tmp \
 \
-# PHP7.4
+# PHP8.0
 \
 	&& pecl channel-update pecl.php.net \
 	&& docker-php-ext-configure gd \
@@ -119,8 +121,8 @@ RUN apk update \
 	&& docker-php-ext-install \
 		mysqli \
 		pgsql \
-		opcache \
 		gd \
+		opcache \
 		calendar \
 		imap \
 		ldap \
@@ -137,41 +139,47 @@ RUN apk update \
 		sockets \
 		sysvsem \
 		sysvshm \
-		xmlrpc \
 		xsl \
 		tidy \
         ffi \
-	&& pecl install imagick \
 	&& pecl download libsodium-$PECL_SODIUM_VERSION \
 	&& tar xf libsodium-$PECL_SODIUM_VERSION.tgz \
 	&& (cd libsodium-$PECL_SODIUM_VERSION \
-	&& phpize \
-	&& ./configure \
-	&& make \
-	&& make install ) \
+    	&& phpize \
+    	&& ./configure \
+    	&& make \
+    	&& make install ) \
 	&& rm -rf libsodium-$PECL_SODIUM_VERSION.tgz libsodium-$PECL_SODIUM_VERSION \
 	&& pecl download ssh2-$PECL_SSH2_VERSION \
 	&& tar xf ssh2-$PECL_SSH2_VERSION.tgz \
 	&& (cd ssh2-$PECL_SSH2_VERSION \
-	&& phpize \
-	&& ./configure \
-	&& make \
-	&& make install ) \
+        && patch -p1 < /tmp/pecl-ssh2-php8-issue.patch \
+    	&& phpize \
+    	&& ./configure \
+    	&& make \
+    	&& make install ) \
 	&& rm -rf ssh2-$PECL_SSH2_VERSION.tgz ssh2-$PECL_SSH2_VERSION \
 	&& pecl install yaml-$PECL_YAML_VERSION \
 	&& pecl install apcu-$APCU_VERSION \
-	&& pecl install apcu_bc-$APCU_BC_VERSION \
 	&& pecl install msgpack-$PECL_MSGPACK_VERSION \
 	&& pecl download redis-$PECL_REDIS_VERSION \
 	&& tar xf redis-$PECL_REDIS_VERSION.tgz \
 	&& (cd redis-$PECL_REDIS_VERSION \
-	&& phpize \
-	&& ./configure  --enable-redis --enable-redis-msgpack --enable-redis-lzf \
-	&& make \
-	&& make install )\
+	    && phpize \
+	    && ./configure  --enable-redis --enable-redis-msgpack --enable-redis-lzf \
+	    && make \
+	    && make install ) \
 	&& rm -rf redis-$PECL_REDIS_VERSION.tgz redis-$PECL_REDIS_VERSION \
+	&& pecl download xmlrpc-$PECL_XMLRPC_VERSION \
+	&& tar xf xmlrpc-$PECL_XMLRPC_VERSION.tgz \
+	&& (cd xmlrpc-$PECL_XMLRPC_VERSION \
+	&& phpize \
+	&& ./configure \
+	&& make \
+	&& make install ) \
+	&& rm -rf xmlrpc-$PECL_XMLRPC_VERSION.tgz xmlrpc-$PECL_XMLRPC_VERSION \
 	&& docker-php-source delete \
-	&& docker-php-ext-enable imagick sodium ssh2 yaml apcu apc msgpack redis \
+	&& docker-php-ext-enable sodium yaml apcu msgpack redis xmlrpc \
 	&& strip /usr/local/lib/php/extensions/no-debug-non-zts-${EXTENSION_VERSION}/*.so \
 	&& apk add --no-cache --virtual .gettext gettext \
 	&& mv /usr/bin/envsubst /tmp/ \
@@ -195,15 +203,15 @@ RUN apk update \
 	&& rm -rf /tmp/mozjpeg* /tmp/pear /usr/include /usr/lib/pkgconfig /usr/lib/*a /usr/share/doc /usr/share/man \
 	&& apk add pngquant optipng jpegoptim ssmtp \
 	&& chown httpd /etc/ssmtp /etc/ssmtp/ssmtp.conf \
-	&& mv /tmp/libturbojpeg.so.0.1.0 /tmp/libjpeg.so.8.1.2 /usr/lib \
-	&& mkdir -p /etc/php7.d/conf.d /etc/php7-fpm.d \
-	&& cp /usr/local/etc/php/conf.d/* /etc/php7.d/conf.d/ \
-	&& cp /usr/local/etc/php-fpm.d/* /etc/php7-fpm.d/ \
-	&& mkdir -p /var/log/php7-fpm \
-	&& ln -sf /dev/stdout /var/log/php7-fpm/www-error.log \
-	&& ln -sf /dev/stderr /var/log/php7-fpm/www-slow.log \
-    && mkdir -p /var/lib/php7/session /var/lib/php7/wsdlcache  \
-	&& chown httpd:www /var/lib/php7/session /var/lib/php7/wsdlcache \
+	&& mv /tmp/libturbojpeg.so.0.2.0 /tmp/libjpeg.so.62.3.0 /usr/lib64 \
+	&& mkdir -p /etc/php.d/conf.d /etc/php-fpm.d \
+	&& cp /usr/local/etc/php/conf.d/* /etc/php.d/conf.d/ \
+	&& cp /usr/local/etc/php-fpm.d/* /etc/php-fpm.d/ \
+	&& mkdir -p /var/log/php-fpm \
+	&& ln -sf /dev/stdout /var/log/php-fpm/www-error.log \
+	&& ln -sf /dev/stderr /var/log/php-fpm/www-slow.log \
+    && mkdir -p /var/lib/php/session /var/lib/php/wsdlcache  \
+	&& chown httpd:www /var/lib/php/session /var/lib/php/wsdlcache \
 	&& echo mysqli.default_socket=/var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-mysqli.ini \
 	&& echo pdo_mysql.default_socket = /var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-pdo_mysql.ini \
 	&& cd /tmp \
