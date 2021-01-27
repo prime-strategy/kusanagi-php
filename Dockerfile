@@ -7,14 +7,15 @@ FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 MAINTAINER kusanagi@prime-strategy.co.jp
 
 # Environment variable
+ARG MOZJPEG_VERSION=4.0.0
 ARG APCU_VERSION=5.1.19
 ARG APCU_BC_VERSION=1.0.5
-ARG MOZJPEG_VERSION=4.0.0
-ARG PECL_SODIUM_VERSION=2.0.23
-ARG PECL_YAML_VERSION=2.2.1
-ARG PECL_SSH2_VERSION=1.2
+ARG PECL_IMAGICK_VERSION=3.4.4
 ARG PECL_MSGPACK_VERSION=2.1.2
 ARG PECL_REDIS_VERSION=5.3.2
+ARG PECL_SODIUM_VERSION=2.0.23
+ARG PECL_SSH2_VERSION=1.2
+ARG PECL_YAML_VERSION=2.2.1
 
 ARG EXTENSION_VERSION=20190902
 
@@ -143,7 +144,7 @@ RUN apk update \
 		xsl \
 		tidy \
         ffi \
-	&& pecl install imagick \
+	&& pecl install imagick-$PECL_IMAGICK_VERSION \
 	&& pecl download libsodium-$PECL_SODIUM_VERSION \
 	&& tar xf libsodium-$PECL_SODIUM_VERSION.tgz \
 	&& (cd libsodium-$PECL_SODIUM_VERSION \
@@ -186,7 +187,7 @@ RUN apk update \
 			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)" \
 	&& apk del .gettext \
-	&& apk add --no-cache --virtual .php-rundeps $runDeps \
+	&& apk add --no-cache --virtual .php-rundeps $runDeps imagemagick \
 	&& apk del .build-php \
 	&& mv /tmp/envsubst /usr/bin/envsubst \
 	&& cd / \
