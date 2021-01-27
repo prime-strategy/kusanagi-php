@@ -178,7 +178,7 @@ RUN apk update \
 			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)" \
 	&& apk del .gettext \
-	&& apk add --no-cache --virtual .php-rundeps $runDeps \
+	&& apk add --no-cache --virtual .php-rundeps $runDeps imagemagick \
 	&& apk del .build-php \
 	&& mv /tmp/envsubst /usr/bin/envsubst \
 	&& cd / \

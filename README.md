@@ -8,6 +8,7 @@ PHP7.3 FastCGI Server ( for KUSANAGI Runs on Docker )
 - php-7.3.26-fpm-alpine3.12
 - acpu-5.1.19
 - apc_bc-1.0.5
+- imagick:3.4.4
 - msgpack-2.1.2
 - redis-5.3.2
 - sodium-2.0.23
@@ -31,7 +32,6 @@ PHP7.3 FastCGI Server ( for KUSANAGI Runs on Docker )
 - gettext:7.3.26
 - hash:7.3.26
 - iconv:7.3.26
-- imagick:3.4.4
 - imap:2007f
 - json:1.6.0
 - ldap:7.3.26
