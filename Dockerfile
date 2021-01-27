@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.0.0
+ARG APP_VERSION=8.0.1
 ARG OS_VERSION=alpine3.12
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 MAINTAINER kusanagi@prime-strategy.co.jp
@@ -14,7 +14,7 @@ ARG PECL_YAML_VERSION=2.2.1
 ARG PECL_SSH2_VERSION=1.2
 ARG PECL_MSGPACK_VERSION=2.1.2
 ARG PECL_REDIS_VERSION=5.3.2
-ARG PECL_XMLRPC_VERSION=1.0.0RC1
+ARG PECL_XMLRPC_VERSION=1.0.0RC2
 
 ARG EXTENSION_VERSION=20200930
 
@@ -192,7 +192,7 @@ RUN apk update \
 			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)" \
 	&& apk del .gettext \
-	&& apk add --no-cache --virtual .php-rundeps $runDeps \
+	&& apk add --no-cache --virtual .php-rundeps $runDeps imagemagick \
 	&& apk del .build-php \
 	&& mv /tmp/envsubst /usr/bin/envsubst \
 	&& cd / \
