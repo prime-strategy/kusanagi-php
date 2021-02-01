@@ -28,198 +28,200 @@ COPY files/pecl-ssh2-php8-issue.patch /tmp
 
 # add user
 RUN : \
-	&& apk update \
-	&& apk upgrade \
-	&& apk add --virtual .user shadow \
-	&& groupadd -g 1001 www \
-	&& useradd -d /var/lib/www -s /bin/nologin -g www -M -u 1001 httpd \
-	&& groupadd -g 1000 kusanagi \
-	&& useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
-	&& chmod 755 /home/kusanagi \
-	&& apk del --purge .user \
-	&& :
+    && apk update \
+    && apk upgrade \
+    && apk add --virtual .user shadow \
+    && groupadd -g 1001 www \
+    && useradd -d /var/lib/www -s /bin/nologin -g www -M -u 1001 httpd \
+    && groupadd -g 1000 kusanagi \
+    && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
+    && chmod 755 /home/kusanagi \
+    && apk del --purge .user \
+    && :
 
 RUN apk update \
-	&& apk add --update --no-cache --virtual .build-php \
-		$PHPIZE_DEPS \
-		build-base \
-		automake \
+    && apk add --update --no-cache --virtual .build-php \
+        $PHPIZE_DEPS \
+        build-base \
+        automake \
         cmake \
-		gettext \
-		libtool \
-		nasm \
-		mariadb \
-		mariadb-dev \
-		postgresql \
-		postgresql-dev \
-		gd-dev \
-		libpng-dev \
-		libwebp-dev \
-		libxpm-dev \
-		zlib-dev \
-		libzip-dev \
-		freetype-dev \
-		bzip2-dev \
-		libexif-dev \
-		xmlrpc-c-dev \
-		pcre-dev \
-		gettext-dev \
-		libxslt-dev \
-		openldap-dev \
-		imap-dev \
-		icu-dev \
-		curl \
-		imagemagick \
-		imagemagick-dev \
-		libsodium \
-		libsodium-dev \
-		gettext \
-		argon2-dev \
-		coreutils \
-		curl-dev \
-		libjpeg-turbo-dev \
-		libedit-dev \
-		libxml2-dev \
-		openssl-dev \
-		sqlite-dev \
-		yaml-dev \
-		libssh2-dev \
-		libgcrypt-dev \
-		libgpg-error-dev \
-		tidyhtml-dev \
+        gettext \
+        libtool \
+        nasm \
+        mariadb \
+        mariadb-dev \
+        postgresql \
+        postgresql-dev \
+        gd-dev \
+        libpng-dev \
+        libwebp-dev \
+        libxpm-dev \
+        zlib-dev \
+        libzip-dev \
+        freetype-dev \
+        bzip2-dev \
+        libexif-dev \
+        xmlrpc-c-dev \
+        pcre-dev \
+        gettext-dev \
+        libxslt-dev \
+        openldap-dev \
+        imap-dev \
+        icu-dev \
+        curl \
+        imagemagick \
+        imagemagick-dev \
+        libsodium \
+        libsodium-dev \
+        gettext \
+        argon2-dev \
+        coreutils \
+        curl-dev \
+        libjpeg-turbo-dev \
+        libedit-dev \
+        libxml2-dev \
+        openssl-dev \
+        sqlite-dev \
+        yaml-dev \
+        libssh2-dev \
+        libgcrypt-dev \
+        libgpg-error-dev \
+        tidyhtml-dev \
         libffi-dev \
-	&& cd /tmp \
+    && cd /tmp \
 # mozjpeg
-	&& curl -LO https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz#//mozjpeg-${MOZJPEG_VERSION}.tar.gz \
-	&& tar xf mozjpeg-${MOZJPEG_VERSION}.tar.gz \
-	&& cd mozjpeg-${MOZJPEG_VERSION} \
-	&& mkdir build && cd build \
+    && curl -LO https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz#//mozjpeg-${MOZJPEG_VERSION}.tar.gz \
+    && tar xf mozjpeg-${MOZJPEG_VERSION}.tar.gz \
+    && cd mozjpeg-${MOZJPEG_VERSION} \
+    && mkdir build && cd build \
     && cmake -DCMAKE_INSTALL_PREFIX=/usr -DPNG_SUPPORTED=FALSE -DWITH_MEM_SRCDST=TRUE .. \
     && make install \
     && ls -l /usr/lib/libjpeg* \
-	&& strip \
-		/usr/bin/wrjpgcom \
-		/usr/bin/rdjpgcom \
-		/usr/bin/cjpeg \
-		/usr/bin/jpegtran \
-		/usr/bin/djpeg \
-		/usr/bin/tjbench \
-		/usr/lib64/libturbojpeg.so.0.2.0 \
+    && strip \
+        /usr/bin/wrjpgcom \
+        /usr/bin/rdjpgcom \
+        /usr/bin/cjpeg \
+        /usr/bin/jpegtran \
+        /usr/bin/djpeg \
+        /usr/bin/tjbench \
+        /usr/lib64/libturbojpeg.so.0.2.0 \
         /usr/lib64/libjpeg.so.62.3.0 \
-	&& cp /usr/lib64/libturbojpeg.so.0.2.0 \
+    && cp /usr/lib64/libturbojpeg.so.0.2.0 \
         /usr/lib64/libjpeg.so.62.3.0 \
-		/tmp \
-	&& cp /usr/bin/mogrify /tmp \
+        /tmp \
+    && cp /usr/bin/mogrify /tmp \
 \
 # PHP8.0
 \
-	&& pecl channel-update pecl.php.net \
-	&& docker-php-ext-configure gd \
-		--with-webp \
-		--with-jpeg \
-		--with-xpm \
-	&& docker-php-ext-install \
-		mysqli \
-		pgsql \
-		gd \
-		opcache \
-		calendar \
-		imap \
-		ldap \
-		bz2 \
-		zip \
-		pdo \
-		pdo_mysql \
-		pdo_pgsql \
-		bcmath \
-		exif \
-		gettext \
-		pcntl \
-		soap \
-		sockets \
-		sysvsem \
-		sysvshm \
-		xsl \
-		tidy \
+    && pecl channel-update pecl.php.net \
+    && docker-php-ext-configure gd \
+        --with-webp \
+        --with-jpeg \
+        --with-xpm \
+    && docker-php-ext-install \
+        mysqli \
+        pgsql \
+        gd \
+        opcache \
+        calendar \
+        imap \
+        ldap \
+        bz2 \
+        zip \
+        pdo \
+        pdo_mysql \
+        pdo_pgsql \
+        bcmath \
+        exif \
+        gettext \
+        pcntl \
+        soap \
+        sockets \
+        sysvsem \
+        sysvshm \
+        xsl \
+        tidy \
         ffi \
-	&& pecl download libsodium-$PECL_SODIUM_VERSION \
-	&& tar xf libsodium-$PECL_SODIUM_VERSION.tgz \
-	&& (cd libsodium-$PECL_SODIUM_VERSION \
-    	&& phpize \
-    	&& ./configure \
-    	&& make \
-    	&& make install ) \
-	&& rm -rf libsodium-$PECL_SODIUM_VERSION.tgz libsodium-$PECL_SODIUM_VERSION \
-	&& pecl download ssh2-$PECL_SSH2_VERSION \
-	&& tar xf ssh2-$PECL_SSH2_VERSION.tgz \
-	&& (cd ssh2-$PECL_SSH2_VERSION \
+    && pecl download libsodium-$PECL_SODIUM_VERSION \
+    && tar xf libsodium-$PECL_SODIUM_VERSION.tgz \
+    && (cd libsodium-$PECL_SODIUM_VERSION \
+        && phpize \
+        && ./configure \
+        && make \
+        && make install ) \
+    && rm -rf libsodium-$PECL_SODIUM_VERSION.tgz libsodium-$PECL_SODIUM_VERSION \
+    && pecl download ssh2-$PECL_SSH2_VERSION \
+    && tar xf ssh2-$PECL_SSH2_VERSION.tgz \
+    && (cd ssh2-$PECL_SSH2_VERSION \
         && patch -p1 < /tmp/pecl-ssh2-php8-issue.patch \
-    	&& phpize \
-    	&& ./configure \
-    	&& make \
-    	&& make install ) \
-	&& rm -rf ssh2-$PECL_SSH2_VERSION.tgz ssh2-$PECL_SSH2_VERSION \
-	&& pecl install yaml-$PECL_YAML_VERSION \
-	&& pecl install apcu-$APCU_VERSION \
-	&& pecl install msgpack-$PECL_MSGPACK_VERSION \
-	&& pecl download redis-$PECL_REDIS_VERSION \
-	&& tar xf redis-$PECL_REDIS_VERSION.tgz \
-	&& (cd redis-$PECL_REDIS_VERSION \
-	    && phpize \
-	    && ./configure  --enable-redis --enable-redis-msgpack --enable-redis-lzf \
-	    && make \
-	    && make install ) \
-	&& rm -rf redis-$PECL_REDIS_VERSION.tgz redis-$PECL_REDIS_VERSION \
-	&& pecl download xmlrpc-$PECL_XMLRPC_VERSION \
-	&& tar xf xmlrpc-$PECL_XMLRPC_VERSION.tgz \
-	&& (cd xmlrpc-$PECL_XMLRPC_VERSION \
-	&& phpize \
-	&& ./configure \
-	&& make \
-	&& make install ) \
-	&& rm -rf xmlrpc-$PECL_XMLRPC_VERSION.tgz xmlrpc-$PECL_XMLRPC_VERSION \
-	&& docker-php-source delete \
-	&& docker-php-ext-enable sodium yaml apcu msgpack redis xmlrpc \
-	&& strip /usr/local/lib/php/extensions/no-debug-non-zts-${EXTENSION_VERSION}/*.so \
-	&& apk add --no-cache --virtual .gettext gettext \
-	&& mv /usr/bin/envsubst /tmp/ \
-	&& runDeps="$( \
-		scanelf --needed --nobanner --format '%n#p' /usr/local/bin/php /tmp/mogriify \
-			/usr/local/lib/php/extensions/no-debug-non-zts-${EXTENSION_VERSION}/*.so /tmp/envsubst \
-			| tr ',' '\n' \
-			| sort -u \
-			| grep -v jpeg \
-			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-	)" \
-	&& apk del .gettext \
-	&& apk add --no-cache --virtual .php-rundeps $runDeps imagemagick \
-	&& apk del .build-php \
-	&& mv /tmp/envsubst /usr/bin/envsubst \
-	&& cd / \
-	&& mv /tmp/mogrify /usr/bin \
-	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-apc.ini \
-	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini \
-	&& rm -f /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini \
-	&& rm -rf /tmp/mozjpeg* /tmp/pear /usr/include /usr/lib/pkgconfig /usr/lib/*a /usr/share/doc /usr/share/man \
-	&& apk add pngquant optipng jpegoptim ssmtp \
-	&& chown httpd /etc/ssmtp /etc/ssmtp/ssmtp.conf \
-	&& mv /tmp/libturbojpeg.so.0.2.0 /tmp/libjpeg.so.62.3.0 /usr/lib64 \
-	&& mkdir -p /etc/php.d/conf.d /etc/php-fpm.d \
-	&& cp /usr/local/etc/php/conf.d/* /etc/php.d/conf.d/ \
-	&& cp /usr/local/etc/php-fpm.d/* /etc/php-fpm.d/ \
-	&& mkdir -p /var/log/php-fpm \
-	&& ln -sf /dev/stdout /var/log/php-fpm/www-error.log \
-	&& ln -sf /dev/stderr /var/log/php-fpm/www-slow.log \
+        && phpize \
+        && ./configure \
+        && make \
+        && make install ) \
+    && rm -rf ssh2-$PECL_SSH2_VERSION.tgz ssh2-$PECL_SSH2_VERSION \
+    && pecl install yaml-$PECL_YAML_VERSION \
+    && pecl install apcu-$APCU_VERSION \
+    && pecl install msgpack-$PECL_MSGPACK_VERSION \
+    && pecl download redis-$PECL_REDIS_VERSION \
+    && tar xf redis-$PECL_REDIS_VERSION.tgz \
+    && (cd redis-$PECL_REDIS_VERSION \
+        && phpize \
+        && ./configure  --enable-redis --enable-redis-msgpack --enable-redis-lzf \
+        && make \
+        && make install ) \
+    && rm -rf redis-$PECL_REDIS_VERSION.tgz redis-$PECL_REDIS_VERSION \
+    && pecl download xmlrpc-$PECL_XMLRPC_VERSION \
+    && tar xf xmlrpc-$PECL_XMLRPC_VERSION.tgz \
+    && (cd xmlrpc-$PECL_XMLRPC_VERSION \
+    && phpize \
+    && ./configure \
+    && make \
+    && make install ) \
+    && rm -rf xmlrpc-$PECL_XMLRPC_VERSION.tgz xmlrpc-$PECL_XMLRPC_VERSION \
+    && docker-php-source delete \
+    && docker-php-ext-enable sodium yaml apcu msgpack redis xmlrpc \
+    && strip /usr/local/lib/php/extensions/no-debug-non-zts-${EXTENSION_VERSION}/*.so \
+    && apk add --no-cache --virtual .gettext gettext \
+    && mv /usr/bin/envsubst /tmp/ \
+    && runDeps="$( \
+        scanelf --needed --nobanner --format '%n#p' /usr/local/bin/php \
+            /usr/local/sbin/php-fpm /usr/local/lib/php/extensions/no-debug-non-zts-${EXTENSION_VERSION}/*.so \
+            /tmp/mogrify /tmp/envsubst \
+            | tr ',' '\n' \
+            | sort -u \
+            | grep -v jpeg \
+            | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+    )" \
+    && apk del .gettext \
+    && echo $runDeps \
+    && apk add --no-cache --virtual .php-rundeps $runDeps \
+    && apk del .build-php \
+    && mv /tmp/envsubst /usr/bin/envsubst \
+    && cd / \
+    && mv /tmp/mogrify /usr/bin \
+    && rm -f /usr/local/etc/php/conf.d/docker-php-ext-apc.ini \
+    && rm -f /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini \
+    && rm -f /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini \
+    && rm -rf /tmp/mozjpeg* /tmp/pear /usr/include /usr/lib/pkgconfig /usr/lib/*a /usr/share/doc /usr/share/man \
+    && apk add pngquant optipng jpegoptim ssmtp \
+    && chown httpd /etc/ssmtp /etc/ssmtp/ssmtp.conf \
+    && mv /tmp/libturbojpeg.so.0.2.0 /tmp/libjpeg.so.62.3.0 /usr/lib64 \
+    && mkdir -p /etc/php.d/conf.d /etc/php-fpm.d \
+    && cp /usr/local/etc/php/conf.d/* /etc/php.d/conf.d/ \
+    && cp /usr/local/etc/php-fpm.d/* /etc/php-fpm.d/ \
+    && mkdir -p /var/log/php-fpm \
+    && ln -sf /dev/stdout /var/log/php-fpm/www-error.log \
+    && ln -sf /dev/stderr /var/log/php-fpm/www-slow.log \
     && mkdir -p /var/lib/php/session /var/lib/php/wsdlcache  \
-	&& chown httpd:www /var/lib/php/session /var/lib/php/wsdlcache \
-	&& echo mysqli.default_socket=/var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-mysqli.ini \
-	&& echo pdo_mysql.default_socket = /var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-pdo_mysql.ini \
-	&& cd /tmp \
-	&& curl -LO https://composer.github.io/installer.sha384sum \
-	&& curl -LO https://getcomposer.org/installer \
-	&& sha3sum installer.sha384sum \
-	&& php installer --filename=composer --install-dir=/usr/local/bin \
-	&& rm installer installer.sha384sum \
+    && chown httpd:www /var/lib/php/session /var/lib/php/wsdlcache \
+    && echo mysqli.default_socket=/var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-mysqli.ini \
+    && echo pdo_mysql.default_socket = /var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-pdo_mysql.ini \
+    && cd /tmp \
+    && curl -LO https://composer.github.io/installer.sha384sum \
+    && curl -LO https://getcomposer.org/installer \
+    && sha3sum installer.sha384sum \
+    && php installer --filename=composer --install-dir=/usr/local/bin \
+    && rm installer installer.sha384sum \
     && chown -R httpd:www /usr/local/etc \
     && :
 
