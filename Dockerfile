@@ -1,17 +1,17 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.0.2
+ARG APP_VERSION=8.0.3
 ARG OS_VERSION=alpine3.13
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 MAINTAINER kusanagi@prime-strategy.co.jp
 
 # Environment variable
-ARG APCU_VERSION=5.1.19
-ARG MOZJPEG_VERSION=4.0.0
+ARG APCU_VERSION=5.1.20
+ARG MOZJPEG_VERSION=4.0.3
 ARG PECL_SODIUM_VERSION=2.0.23
 ARG PECL_YAML_VERSION=2.2.1
-ARG PECL_SSH2_VERSION=1.2
+ARG PECL_SSH2_VERSION=1.3.1
 ARG PECL_MSGPACK_VERSION=2.1.2
 ARG PECL_REDIS_VERSION=5.3.3
 ARG PECL_XMLRPC_VERSION=1.0.0RC2
@@ -24,7 +24,6 @@ COPY files/www.conf /usr/local/etc/php-fpm.d/www.conf.template
 COPY files/php-fpm.conf /usr/local/etc/php-fpm.conf
 COPY files/php.ini-production /usr/local/etc/php.conf
 COPY files/docker-entrypoint.sh /usr/local/bin
-COPY files/pecl-ssh2-php8-issue.patch /tmp
 
 # add user
 RUN : \
@@ -153,7 +152,6 @@ RUN apk update \
     && pecl download ssh2-$PECL_SSH2_VERSION \
     && tar xf ssh2-$PECL_SSH2_VERSION.tgz \
     && (cd ssh2-$PECL_SSH2_VERSION \
-        && patch -p1 < /tmp/pecl-ssh2-php8-issue.patch \
         && phpize \
         && ./configure \
         && make \
