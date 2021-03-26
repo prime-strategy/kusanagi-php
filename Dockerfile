@@ -13,7 +13,7 @@ ARG PECL_SODIUM_VERSION=2.0.23
 ARG PECL_YAML_VERSION=2.2.1
 ARG PECL_SSH2_VERSION=1.3.1
 ARG PECL_MSGPACK_VERSION=2.1.2
-ARG PECL_REDIS_VERSION=5.3.3
+ARG PECL_REDIS_VERSION=5.3.4
 ARG PECL_XMLRPC_VERSION=1.0.0RC2
 
 ARG EXTENSION_VERSION=20200930
@@ -36,9 +36,6 @@ RUN : \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
-    && :
-
-RUN apk update \
     && apk add --update --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         build-base \
@@ -194,8 +191,8 @@ RUN apk update \
     && echo $runDeps \
     && apk add --no-cache --virtual .php-rundeps $runDeps \
     && apk del .build-php \
-    && mv /tmp/envsubst /usr/bin/envsubst \
     && cd / \
+    && mv /tmp/envsubst /usr/bin/envsubst \
     && mv /tmp/mogrify /usr/bin \
     && rm -f /usr/local/etc/php/conf.d/docker-php-ext-apc.ini \
     && rm -f /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini \
