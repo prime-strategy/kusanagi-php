@@ -29,7 +29,7 @@ COPY files/docker-entrypoint.sh /usr/local/bin
 # add user
 RUN : \
     && apk update \
-    && apk upgrade \
+    && apk upgrade openssl \
     && apk add --virtual .user shadow \
     && groupadd -g 1001 www \
     && useradd -d /var/lib/www -s /bin/nologin -g www -M -u 1001 httpd \
@@ -37,9 +37,6 @@ RUN : \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
-    && :
-
-RUN apk update \
     && apk add --update --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         build-base \

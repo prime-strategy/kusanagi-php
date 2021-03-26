@@ -19,7 +19,7 @@ libacl-2.2.53-r0
 libbsd-0.10.0-r0
 libbz2-1.0.8-r1
 libc-utils-0.7.2-r3
-libcrypto1.1-1.1.1j-r0
+libcrypto1.1-1.1.1k-r0
 libcurl-7.74.0-r1
 libedit-20191231.3.1-r1
 libffi-3.3-r2
@@ -38,7 +38,7 @@ libsasl-2.1.27-r10
 libsm-1.2.3-r0
 libsodium-1.0.18-r0
 libssh2-1.9.0-r1
-libssl1.1-1.1.1j-r0
+libssl1.1-1.1.1k-r0
 libtls-standalone-2.9.1-r1
 libuuid-2.36.1-r1
 libwebp-1.1.0-r0
@@ -58,7 +58,7 @@ ncurses-libs-6.2_p20210109-r0
 ncurses-terminfo-base-6.2_p20210109-r0
 nghttp2-libs-1.42.0-r1
 oniguruma-6.9.6-r0
-openssl-1.1.1j-r0
+openssl-1.1.1k-r0
 optipng-0.7.7-r0
 pngquant-2.13.1-r0
 scanelf-1.2.8-r0
