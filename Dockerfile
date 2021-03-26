@@ -9,12 +9,12 @@ MAINTAINER kusanagi@prime-strategy.co.jp
 # Environment variable
 ARG APCU_VERSION=5.1.19
 ARG APCU_BC_VERSION=1.0.5
-ARG MOZJPEG_VERSION=4.0.0
+ARG MOZJPEG_VERSION=4.0.3
 ARG PECL_SODIUM_VERSION=2.0.23
 ARG PECL_YAML_VERSION=2.2.1
 ARG PECL_SSH2_VERSION=1.2
 ARG PECL_MSGPACK_VERSION=2.1.2
-ARG PECL_REDIS_VERSION=5.3.3
+ARG PECL_REDIS_VERSION=5.3.4
 
 ARG EXTENSION_VERSION=20180731
 
@@ -28,7 +28,7 @@ COPY files/docker-entrypoint.sh /usr/local/bin
 # add user
 RUN : \
     && apk update \
-    && apk upgrade \
+    && apk upgrade openssl \
     && apk add --virtual .user shadow \
     && groupadd -g 1001 www \
     && useradd -d /var/lib/www -s /bin/nologin -g www -M -u 1001 httpd \
@@ -36,9 +36,6 @@ RUN : \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
-    && :
-
-RUN apk update \
     && apk add --update --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         build-base \
