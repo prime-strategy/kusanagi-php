@@ -1,11 +1,12 @@
 #//----------------------------------------------------------------------------
 #// PHP7 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG OS_VERSION=8.2.2004
+ARG OS_VERSION=8.3.2011
 FROM centos:$OS_VERSION
 MAINTAINER kusanagi@prime-strategy.co.jp
 
-ENV APP_VERSION=7.4.10-1.el8
+ENV APP=kusanagi-php74
+ENV APP_VERSION=7.4.16-1.el8
 
 RUN : \
 	&& groupadd -g 1001 www \
@@ -17,7 +18,8 @@ RUN : \
     && dnf install -y http://rpms.famillecollet.com/enterprise/remi-release-8.rpm \
     && dnf install -y https://repo.prime-strategy.co.jp/kusanagi9/rpm/kusanagi-release-9.noarch.rpm \
     && rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-prime-strategy \
-    && dnf install -y kusanagi-php74-${APP_VERSION} \
+    && dnf install -y ${APP}-${APP_VERSION} gettext \
+    && dnf update -y \
     && dnf clean all \
     && rm -rf /var/cache/dnf/* \
     && chown httpd:www -R /var/opt/kusanagi \
@@ -28,15 +30,6 @@ RUN : \
         -e 's|php_admin_value\[error_log\] =.*$|php_admin_value[error_log] = /dev/stderr|' /etc/opt/kusanagi/php-fpm.d/www.conf \
     && :
 
-# COPY files/docker-entrypoint.sh /usr/local/bin
-ARG MICROSCANNER_TOKEN
-RUN if [ x${MICROSCANNER_TOKEN} != x ] ; then \
-    	update-ca-trust \
-    	&& curl -sLO https://get.aquasec.com/microscanner \
-    	&& chmod +x microscanner \
-    	&& ./microscanner -c ${MICROSCANNER_TOKEN} -c || exit 1 \
-    	&& rm ./microscanner \
-	; fi
 
 USER httpd
 # ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
