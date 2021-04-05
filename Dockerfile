@@ -4,7 +4,7 @@
 ARG APP_VERSION=7.4.16
 ARG OS_VERSION=alpine3.13
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
-MAINTAINER kusanagi@prime-strategy.co.jp
+LABEL maintainer=kusanagi@prime-strategy.co.jp
 
 # Environment variable
 ARG MOZJPEG_VERSION=4.0.3
@@ -29,7 +29,7 @@ COPY files/docker-entrypoint.sh /usr/local/bin
 # add user
 RUN : \
     && apk update \
-    && apk upgrade openssl \
+    && apk upgrade busybox ssl_client openssl \
     && apk add --virtual .user shadow \
     && groupadd -g 1001 www \
     && useradd -d /var/lib/www -s /bin/nologin -g www -M -u 1001 httpd \
