@@ -29,6 +29,7 @@ COPY files/docker-entrypoint.sh /usr/local/bin
 # add user
 RUN : \
     && apk update \
+    && apk upgrade apk-tools \
     && apk upgrade busybox ssl_client openssl \
     && apk add --virtual .user shadow \
     && groupadd -g 1001 www \
