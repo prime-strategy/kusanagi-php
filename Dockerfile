@@ -1,10 +1,10 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.0.3
+ARG APP_VERSION=8.0.5
 ARG OS_VERSION=alpine3.13
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
-MAINTAINER kusanagi@prime-strategy.co.jp
+LABEL maintainer=kusanagi@prime-strategy.co.jp
 
 # Environment variable
 ARG APCU_VERSION=5.1.20
@@ -28,8 +28,6 @@ COPY files/docker-entrypoint.sh /usr/local/bin
 # add user
 RUN : \
     && apk update \
-    && apk upgrade apk-tools \
-    && apk upgrade busybox ssl_client openssl \
     && apk add --virtual .user shadow \
     && groupadd -g 1001 www \
     && useradd -d /var/lib/www -s /bin/nologin -g www -M -u 1001 httpd \
@@ -222,7 +220,8 @@ RUN : \
     && :
 
 RUN apk add --no-cache --virtual .curl curl \
-    && curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/master/contrib/install.sh | sh -s -- -b /usr/local/bin \
+	&& TRIVY_VERSION=0.16.0 \
+    && curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/master/contrib/install.sh | sh -s -- -b /usr/local/bin v$TRIVY_VERSION \
     && trivy filesystem --exit-code 1 --no-progress / \
     && apk del .curl \
     && :
