@@ -7,12 +7,12 @@ FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
 
 # Environment variable
-ARG APCU_VERSION=5.1.19
+ARG APCU_VERSION=5.1.20
 ARG APCU_BC_VERSION=1.0.5
 ARG MOZJPEG_VERSION=4.0.3
 ARG PECL_SODIUM_VERSION=2.0.23
 ARG PECL_YAML_VERSION=2.2.1
-ARG PECL_SSH2_VERSION=1.2
+ARG PECL_SSH2_VERSION=1.3.1
 ARG PECL_MSGPACK_VERSION=2.1.2
 ARG PECL_REDIS_VERSION=5.3.4
 
@@ -207,10 +207,10 @@ RUN : \
     && :
 
 RUN apk add --no-cache --virtual .curl curl \
-	&& TRIVY_VERSION=0.16.0 \
-    && curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v$TRIVY_VERSION \
+    && curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin \
     && trivy filesystem --exit-code 1 --no-progress / \
     && apk del .curl \
+    && rm /usr/local/bin/trivy \
     && :
 
 USER httpd
