@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP7 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=7.3.28
+ARG APP_VERSION=7.3.29
 ARG OS_VERSION=alpine3.13
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
@@ -10,6 +10,7 @@ LABEL maintainer=kusanagi@prime-strategy.co.jp
 ARG APCU_VERSION=5.1.20
 ARG APCU_BC_VERSION=1.0.5
 ARG MOZJPEG_VERSION=4.0.3
+ARG PECL_IMAGICK_VERSION=3.5.0
 ARG PECL_SODIUM_VERSION=2.0.23
 ARG PECL_YAML_VERSION=2.2.1
 ARG PECL_SSH2_VERSION=1.3.1
@@ -132,7 +133,7 @@ RUN : \
         sysvshm \
         xmlrpc \
         xsl \
-    && pecl install imagick \
+    && pecl install imagick-$PECL_IMAGICK_VERSION \
     && pecl download libsodium-$PECL_SODIUM_VERSION \
     && tar xf libsodium-$PECL_SODIUM_VERSION.tgz \
     && (cd libsodium-$PECL_SODIUM_VERSION \
