@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.0.7
+ARG APP_VERSION=8.0.8
 ARG OS_VERSION=alpine3.13
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
@@ -13,6 +13,7 @@ ARG PECL_SODIUM_VERSION=2.0.23
 ARG PECL_YAML_VERSION=2.2.1
 ARG PECL_SSH2_VERSION=1.3.1
 ARG PECL_MSGPACK_VERSION=2.1.2
+ARG PECL_IMAGICK_VERSION=3.5.0
 ARG PECL_REDIS_VERSION=5.3.4
 ARG PECL_XMLRPC_VERSION=1.0.0RC2
 
@@ -157,6 +158,7 @@ RUN : \
     && pecl install yaml-$PECL_YAML_VERSION \
     && pecl install apcu-$APCU_VERSION \
     && pecl install msgpack-$PECL_MSGPACK_VERSION \
+    && pecl install imagick-$PECL_IMAGICK_VERSION \
     && pecl download redis-$PECL_REDIS_VERSION \
     && tar xf redis-$PECL_REDIS_VERSION.tgz \
     && (cd redis-$PECL_REDIS_VERSION \
