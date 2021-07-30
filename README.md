@@ -2,13 +2,13 @@
 PHP7.3 FastCGI Server ( for KUSANAGI Runs on Docker )
 
 ## Versions(tags)
-- php-7.3.29-r0
+- php-7.3.29-r1
 
 ## Image Content
-- php-7.3.29-fpm-alpine3.13
+- php-7.3.29-fpm-alpine3.14
 - acpu-5.1.20
 - apc_bc-1.0.5
-- imagick:3.5.0
+- imagick:3.5.1
 - msgpack-2.1.2
 - redis-5.3.4
 - sodium-2.0.23

@@ -2,7 +2,7 @@
 #// PHP7 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
 ARG APP_VERSION=7.3.29
-ARG OS_VERSION=alpine3.13
+ARG OS_VERSION=alpine3.14
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
 
@@ -10,7 +10,7 @@ LABEL maintainer=kusanagi@prime-strategy.co.jp
 ARG APCU_VERSION=5.1.20
 ARG APCU_BC_VERSION=1.0.5
 ARG MOZJPEG_VERSION=4.0.3
-ARG PECL_IMAGICK_VERSION=3.5.0
+ARG PECL_IMAGICK_VERSION=3.5.1
 ARG PECL_SODIUM_VERSION=2.0.23
 ARG PECL_YAML_VERSION=2.2.1
 ARG PECL_SSH2_VERSION=1.3.1
@@ -29,7 +29,7 @@ COPY files/docker-entrypoint.sh /usr/local/bin
 # add user
 RUN : \
     && apk update \
-    && apk upgrade curl \
+    && apk upgrade curl apk-tools \
     && apk add --virtual .user shadow \
     && groupadd -g 1001 www \
     && useradd -d /var/lib/www -s /bin/nologin -g www -M -u 1001 httpd \
