@@ -7,7 +7,7 @@ busybox-1.33.1-r3
 c-client-2007f-r11
 ca-certificates-20191127-r5
 ca-certificates-bundle-20191127-r5
-curl-7.78.0-r0
+curl-7.79.0-r0
 expat-2.4.1-r0
 fontconfig-2.13.1-r4
 freetype-2.10.4-r1
@@ -20,7 +20,7 @@ libbsd-0.11.3-r0
 libbz2-1.0.8-r1
 libc-utils-0.7.2-r3
 libcrypto1.1-1.1.1l-r0
-libcurl-7.78.0-r0
+libcurl-7.79.0-r0
 libffi-3.3-r2
 libgcrypt-1.9.4-r0
 libgomp-10.3.1_git20210424-r2
