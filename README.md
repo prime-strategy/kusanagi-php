@@ -2,7 +2,7 @@
 PHP7.3 FastCGI Server ( for KUSANAGI Runs on Docker )
 
 ## Versions(tags)
-- php-7.3.31-r0
+- php-7.3.31-r1
 
 ## Image Content
 - php-7.3.31-fpm-alpine3.14
@@ -32,6 +32,7 @@ PHP7.3 FastCGI Server ( for KUSANAGI Runs on Docker )
 - gettext:7.3.31
 - hash:7.3.31
 - iconv:7.3.31
+- intl:7.3.31
 - imap:2007f
 - json:1.6.0
 - ldap:7.3.31

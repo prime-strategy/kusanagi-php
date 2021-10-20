@@ -117,6 +117,7 @@ RUN : \
         gd \
         calendar \
         imap \
+        intl \
         ldap \
         bz2 \
         zip \
