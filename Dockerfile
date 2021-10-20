@@ -122,6 +122,7 @@ RUN : \
         opcache \
         calendar \
         imap \
+        intl \
         ldap \
         bz2 \
         zip \
