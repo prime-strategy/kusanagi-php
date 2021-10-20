@@ -3,7 +3,7 @@ PHP7.4 FastCGI Server ( for KUSANAGI Runs on Docker )
 
 ## Versions(tags)
 - latest
-- php-7.4.24-r0
+- php-7.4.24-r1
 
 ## Image Content
 - php-7.4.24-fpm-alpine3.14
@@ -34,6 +34,7 @@ PHP7.4 FastCGI Server ( for KUSANAGI Runs on Docker )
 - hash:7.4.24
 - iconv:7.4.24
 - imap:2007f
+- intl:7.4.24
 - json:1.6.0
 - ldap:7.4.24
 - libxml:2.9.10
