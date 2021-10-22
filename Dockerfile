@@ -1,13 +1,13 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.0.11
+ARG APP_VERSION=8.0.12
 ARG OS_VERSION=alpine3.14
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
 
 # Environment variable
-ARG APCU_VERSION=5.1.20
+ARG APCU_VERSION=5.1.21
 ARG MOZJPEG_VERSION=4.0.3
 ARG PECL_SODIUM_VERSION=2.0.23
 ARG PECL_YAML_VERSION=2.2.1
@@ -26,6 +26,7 @@ COPY files/php-fpm.conf /usr/local/etc/php-fpm.conf
 COPY files/php.ini-production /usr/local/etc/php.conf
 COPY files/docker-entrypoint.sh /usr/local/bin
 
+WORKDIR /tmp
 # add user
 RUN : \
     && apk update \
@@ -85,28 +86,27 @@ RUN : \
         libgpg-error-dev \
         tidyhtml-dev \
         libffi-dev \
-    && cd /tmp \
 # mozjpeg
     && curl -LO https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz#//mozjpeg-${MOZJPEG_VERSION}.tar.gz \
     && tar xf mozjpeg-${MOZJPEG_VERSION}.tar.gz \
-    && cd mozjpeg-${MOZJPEG_VERSION} \
-    && mkdir build && cd build \
-    && cmake -DCMAKE_INSTALL_PREFIX=/usr -DPNG_SUPPORTED=FALSE -DWITH_MEM_SRCDST=TRUE .. \
-    && make install \
-    && ls -l /usr/lib/libjpeg* \
-    && strip \
-        /usr/bin/wrjpgcom \
-        /usr/bin/rdjpgcom \
-        /usr/bin/cjpeg \
-        /usr/bin/jpegtran \
-        /usr/bin/djpeg \
-        /usr/bin/tjbench \
-        /usr/lib64/libturbojpeg.so.0.2.0 \
-        /usr/lib64/libjpeg.so.62.3.0 \
-    && cp /usr/lib64/libturbojpeg.so.0.2.0 \
-        /usr/lib64/libjpeg.so.62.3.0 \
-        /tmp \
-    && cp /usr/bin/mogrify /tmp \
+    && (cd mozjpeg-${MOZJPEG_VERSION} \
+        && mkdir build && cd build \
+        && cmake -DCMAKE_INSTALL_PREFIX=/usr -DPNG_SUPPORTED=FALSE -DWITH_MEM_SRCDST=TRUE .. \
+        && make install \
+        && ls -l /usr/lib/libjpeg* \
+        && strip \
+            /usr/bin/wrjpgcom \
+            /usr/bin/rdjpgcom \
+            /usr/bin/cjpeg \
+            /usr/bin/jpegtran \
+            /usr/bin/djpeg \
+            /usr/bin/tjbench \
+            /usr/lib64/libturbojpeg.so.0.2.0 \
+            /usr/lib64/libjpeg.so.62.3.0 \
+        && cp /usr/lib64/libturbojpeg.so.0.2.0 \
+            /usr/lib64/libjpeg.so.62.3.0 \
+            /tmp \
+        && cp /usr/bin/mogrify /tmp ) \
 \
 # PHP8.0
 \
@@ -194,7 +194,6 @@ RUN : \
     && echo $runDeps \
     && apk add --no-cache --virtual .php-rundeps $runDeps \
     && apk del .build-php \
-    && cd / \
     && mv /tmp/envsubst /usr/bin/envsubst \
     && mv /tmp/mogrify /usr/bin \
     && rm -f /usr/local/etc/php/conf.d/docker-php-ext-apc.ini \
@@ -214,7 +213,6 @@ RUN : \
     && chown httpd:www /var/lib/php/session /var/lib/php/wsdlcache \
     && echo mysqli.default_socket=/var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-mysqli.ini \
     && echo pdo_mysql.default_socket = /var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-pdo_mysql.ini \
-    && cd /tmp \
     && curl -LO https://composer.github.io/installer.sha384sum \
     && curl -LO https://getcomposer.org/installer \
     && sha3sum installer.sha384sum \
@@ -231,5 +229,6 @@ RUN apk add --no-cache --virtual .curl curl \
     && :
 
 USER httpd
+WORKDIR /var/lib/www/
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["/usr/local/sbin/php-fpm", "--nodaemonize", "--fpm-config", "/usr/local/etc/php-fpm.conf"]
