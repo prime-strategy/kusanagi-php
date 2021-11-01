@@ -1,18 +1,18 @@
 #//----------------------------------------------------------------------------
 #// PHP7 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=7.3.31
+ARG APP_VERSION=7.3.32
 ARG OS_VERSION=alpine3.14
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
 
 # Environment variable
-ARG APCU_VERSION=5.1.20
+ARG APCU_VERSION=5.1.21
 ARG APCU_BC_VERSION=1.0.5
 ARG MOZJPEG_VERSION=4.0.3
 ARG PECL_IMAGICK_VERSION=3.5.1
 ARG PECL_SODIUM_VERSION=2.0.23
-ARG PECL_YAML_VERSION=2.2.1
+ARG PECL_YAML_VERSION=2.2.2
 ARG PECL_SSH2_VERSION=1.3.1
 ARG PECL_MSGPACK_VERSION=2.1.2
 ARG PECL_REDIS_VERSION=5.3.4
