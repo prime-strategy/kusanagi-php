@@ -30,7 +30,7 @@ WORKDIR /tmp
 # add user
 RUN : \
     && apk update \
-    && apk upgrade apk-tools curl \
+    && apk upgrade busybox curl ssl_client \
     && apk add --virtual .user shadow \
     && groupadd -g 1001 www \
     && useradd -d /var/lib/www -s /bin/nologin -g www -M -u 1001 httpd \
