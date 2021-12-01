@@ -1,8 +1,8 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.0.13
-ARG OS_VERSION=alpine3.14
+ARG APP_VERSION=8.1.0
+ARG OS_VERSION=alpine3.15
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
 
@@ -15,9 +15,8 @@ ARG PECL_SSH2_VERSION=1.3.1
 ARG PECL_MSGPACK_VERSION=2.1.2
 ARG PECL_IMAGICK_VERSION=3.6.0
 ARG PECL_REDIS_VERSION=5.3.4
-ARG PECL_XMLRPC_VERSION=1.0.0RC2
 
-ARG EXTENSION_VERSION=20200930
+ARG EXTENSION_VERSION=20210902
 
 COPY files/*.ini /usr/local/etc/php/conf.d/
 COPY files/opcache*.blacklist /usr/local/etc/php.d/
@@ -59,7 +58,6 @@ RUN : \
         freetype-dev \
         bzip2-dev \
         libexif-dev \
-        xmlrpc-c-dev \
         pcre-dev \
         gettext-dev \
         libxslt-dev \
@@ -108,9 +106,11 @@ RUN : \
             /tmp \
         && cp /usr/bin/mogrify /tmp ) \
 \
-# PHP8.0
+# PHP8.1
 \
     && pecl channel-update pecl.php.net \
+    && pecl install apcu-$APCU_VERSION \
+    && docker-php-ext-enable apcu \
     && docker-php-ext-configure gd \
         --with-webp \
         --with-jpeg \
@@ -157,7 +157,6 @@ RUN : \
         && make install ) \
     && rm -rf ssh2-$PECL_SSH2_VERSION.tgz ssh2-$PECL_SSH2_VERSION \
     && pecl install yaml-$PECL_YAML_VERSION \
-    && pecl install apcu-$APCU_VERSION \
     && pecl install msgpack-$PECL_MSGPACK_VERSION \
     && pecl install imagick-$PECL_IMAGICK_VERSION \
     && pecl download redis-$PECL_REDIS_VERSION \
@@ -168,16 +167,8 @@ RUN : \
         && make \
         && make install ) \
     && rm -rf redis-$PECL_REDIS_VERSION.tgz redis-$PECL_REDIS_VERSION \
-    && pecl download xmlrpc-$PECL_XMLRPC_VERSION \
-    && tar xf xmlrpc-$PECL_XMLRPC_VERSION.tgz \
-    && (cd xmlrpc-$PECL_XMLRPC_VERSION \
-    && phpize \
-    && ./configure \
-    && make \
-    && make install ) \
-    && rm -rf xmlrpc-$PECL_XMLRPC_VERSION.tgz xmlrpc-$PECL_XMLRPC_VERSION \
+    && docker-php-ext-enable sodium yaml msgpack redis \
     && docker-php-source delete \
-    && docker-php-ext-enable sodium yaml apcu msgpack redis xmlrpc \
     && strip /usr/local/lib/php/extensions/no-debug-non-zts-${EXTENSION_VERSION}/*.so \
     && apk add --no-cache --virtual .gettext gettext \
     && mv /usr/bin/envsubst /tmp/ \
@@ -197,7 +188,6 @@ RUN : \
     && mv /tmp/envsubst /usr/bin/envsubst \
     && mv /tmp/mogrify /usr/bin \
     && rm -f /usr/local/etc/php/conf.d/docker-php-ext-apc.ini \
-    && rm -f /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini \
     && rm -f /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini \
     && rm -rf /tmp/mozjpeg* /tmp/pear /usr/include /usr/lib/pkgconfig /usr/lib/*a /usr/share/doc /usr/share/man \
     && apk add pngquant optipng jpegoptim ssmtp \
