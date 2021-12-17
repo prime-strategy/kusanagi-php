@@ -3,10 +3,10 @@ PHP7.4 FastCGI Server ( for KUSANAGI Runs on Docker )
 
 ## Versions(tags)
 - latest
-- php-7.4.26-r2
+- php-7.4.27-r0
 
 ## Image Content
-- php-7.4.26-fpm-alpine3.15
+- php-7.4.27-fpm-alpine3.15
 - acpu-5.1.21
 - apc_bc-1.0.5
 - imagick:3.6.0
@@ -17,58 +17,58 @@ PHP7.4 FastCGI Server ( for KUSANAGI Runs on Docker )
 - yaml-2.2.2
 
 ## Image Content
-- php:7.4.26
-- bcmath:7.4.26
+- php:7.4.27
+- bcmath:7.4.27
 - bz2:1.0.6
-- calendar:7.4.26
-- ctype:7.4.26
+- calendar:7.4.27
+- ctype:7.4.27
 - curl:7.65.1
-- date:7.4.26
+- date:7.4.27
 - dom:20031129
-- exif:7.4.26
+- exif:7.4.27
 - fileinfo:1.0.5
-- filter:7.4.26
-- ftp:7.4.26
+- filter:7.4.27
+- ftp:7.4.27
 - gd:2.1.0
-- gettext:7.4.26
-- hash:7.4.26
-- iconv:7.4.26
+- gettext:7.4.27
+- hash:7.4.27
+- iconv:7.4.27
 - imap:2007f
-- intl:7.4.26
+- intl:7.4.27
 - json:1.6.0
-- ldap:7.4.26
+- ldap:7.4.27
 - libxml:2.9.10
-- mbstring:7.4.26
+- mbstring:7.4.27
 - mysqli:5.0.12-dev
-- mysqlnd:7.4.26
+- mysqlnd:7.4.27
 - openssl:1.1.1d
-- pcntl:7.4.26
+- pcntl:7.4.27
 - pcre:8.41
-- PDO:7.4.26
+- PDO:7.4.27
 - pdo_mysql:5.0.12-dev
 - pdo_pgsql:11.3
 - pdo_sqlite:3.20.1
 - pgsql:11.3
 - Phar:2.0.2
-- posix:7.4.26
-- readline:7.4.26
-- Reflection:7.4.26
-- session:7.4.26
-- SimpleXML:7.4.26
-- soap:7.4.26
-- sockets:7.4.26
-- SPL:7.4.26
-- sqlite3:7.4.26
-- standard:7.4.26
-- sysvsem:7.4.26
-- sysvshm:7.4.26
-- tokenizer:7.4.26
-- xml:7.4.26
-- xmlreader:7.4.26
-- xmlrpc:7.4.26
-- xmlwriter:7.4.26
+- posix:7.4.27
+- readline:7.4.27
+- Reflection:7.4.27
+- session:7.4.27
+- SimpleXML:7.4.27
+- soap:7.4.27
+- sockets:7.4.27
+- SPL:7.4.27
+- sqlite3:7.4.27
+- standard:7.4.27
+- sysvsem:7.4.27
+- sysvshm:7.4.27
+- tokenizer:7.4.27
+- xml:7.4.27
+- xmlreader:7.4.27
+- xmlrpc:7.4.27
+- xmlwriter:7.4.27
 - xsl:1.1.33
 - zip:1.15.6
 - zlib:1.2.11
-- Zend OPcache:7.4.26
+- Zend OPcache:7.4.27
 
