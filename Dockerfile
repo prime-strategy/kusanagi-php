@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.1.2
+ARG APP_VERSION=8.1.3
 ARG OS_VERSION=alpine3.15
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
@@ -14,7 +14,7 @@ ARG PECL_YAML_VERSION=2.2.2
 ARG PECL_SSH2_VERSION=1.3.1
 ARG PECL_MSGPACK_VERSION=2.1.2
 ARG PECL_IMAGICK_VERSION=3.7.0
-ARG PECL_REDIS_VERSION=5.3.6
+ARG PECL_REDIS_VERSION=5.3.7
 
 ARG EXTENSION_VERSION=20210902
 
