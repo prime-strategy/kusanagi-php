@@ -29,7 +29,7 @@ COPY files/docker-entrypoint.sh /usr/local/bin
 # add user
 RUN : \
     && apk update \
-    && apk upgrade xz \
+    && apk upgrade curl xz \
     && apk add --virtual .user shadow \
     && groupadd -g 1001 www \
     && useradd -d /var/lib/www -s /bin/nologin -g www -M -u 1001 httpd \
