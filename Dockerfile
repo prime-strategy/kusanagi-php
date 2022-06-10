@@ -1,8 +1,8 @@
 #//----------------------------------------------------------------------------
 #// PHP7 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=7.4.29
-ARG OS_VERSION=alpine3.15
+ARG APP_VERSION=7.4.30
+ARG OS_VERSION=alpine3.16
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
 
