@@ -1,8 +1,8 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.0.19
-ARG OS_VERSION=alpine3.15
+ARG APP_VERSION=8.0.20
+ARG OS_VERSION=alpine3.16
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
 
@@ -30,7 +30,6 @@ WORKDIR /tmp
 # add user
 RUN : \
     && apk update \
-    && apk upgrade curl xz \
     && apk add --virtual .user shadow \
     && groupadd -g 1001 www \
     && useradd -d /var/lib/www -s /bin/nologin -g www -M -u 1001 httpd \
