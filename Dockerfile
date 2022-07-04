@@ -3,7 +3,7 @@
 #//----------------------------------------------------------------------------
 ARG APP_VERSION=8.1.7
 ARG OS_VERSION=alpine3.16
-FROM php:${APP_VERSION}-fpm-${OS_VERSION}
+FROM --platform=$BUILDPLATFORM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
 
 # Environment variable
@@ -28,6 +28,7 @@ COPY files/docker-entrypoint.sh /usr/local/bin
 WORKDIR /tmp
 # add user
 RUN : \
+    && apk update \
     && apk add --virtual .user shadow \
     && groupadd -g 1001 www \
     && useradd -d /var/lib/www -s /bin/nologin -g www -M -u 1001 httpd \
@@ -35,6 +36,7 @@ RUN : \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
+    && apk upgrade curl \
     && apk add --update --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         build-base \
