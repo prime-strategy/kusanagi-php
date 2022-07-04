@@ -3,7 +3,7 @@
 #//----------------------------------------------------------------------------
 ARG APP_VERSION=8.0.20
 ARG OS_VERSION=alpine3.16
-FROM php:${APP_VERSION}-fpm-${OS_VERSION}
+FROM --platform=$BUILDPLATFORM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
 
 # Environment variable
@@ -37,6 +37,7 @@ RUN : \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
+    && apk upgrade curl \
     && apk add --update --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         build-base \
