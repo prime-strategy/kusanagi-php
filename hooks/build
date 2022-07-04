@@ -1,10 +1,29 @@
 #!/bin/bash
-set -eu
+set -eux
+
+export DOCKER_CLI_EXPERIMENTAL=enabled
+export DOCKER_BUILDKIT=1
 if [ "$DOCKERFILE_PATH" = "" ]; then
     DOCKERFILE_PATH_ARG=""
 else
     DOCKERFILE_PATH_ARG="-f $DOCKERFILE_PATH"
 fi
 
-BUILDARGS=${MICROSCANNER_TOKEN:+--build-arg MICROSCANNER_TOKEN=$MICROSCANNER_TOKEN }
-docker build $BUILDARGS $DOCKERFILE_PATH_ARG -t $IMAGE_NAME .
+docker buildx create \
+    --name builder \
+    --driver docker-container \
+    --platform linux/amd64,linux/arm64,linux/ppc64le,linux/s390x \
+    --use
+docker buildx inspect --bootstrap
+docker buildx ls
+docker buildx build \
+    --progress plain \
+    $DOCKERFILE_PATH_ARG \
+    -t $IMAGE_NAME \
+    .
+docker buildx build \
+    --platform linux/amd64,linux/arm64,linux/ppc64le,linux/s390x \
+    --progress plain \
+    $DOCKERFILE_PATH_ARG \
+    -t $IMAGE_NAME \
+    --push . || true
