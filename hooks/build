@@ -17,8 +17,13 @@ docker buildx create \
 docker buildx inspect --bootstrap
 docker buildx ls
 docker buildx build \
+    --progress plain \
+    $DOCKERFILE_PATH_ARG \
+    -t $IMAGE_NAME \
+    .
+docker buildx build \
     --platform linux/amd64,linux/arm64,linux/ppc64le,linux/s390x \
     --progress plain \
     $DOCKERFILE_PATH_ARG \
     -t $IMAGE_NAME \
-    --push .
+    --push . || true
