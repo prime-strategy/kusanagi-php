@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.1.7
+ARG APP_VERSION=8.1.8
 ARG OS_VERSION=alpine3.16
 FROM --platform=$BUILDPLATFORM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
@@ -15,6 +15,7 @@ ARG PECL_SSH2_VERSION=1.3.1
 ARG PECL_MSGPACK_VERSION=2.1.2
 ARG PECL_IMAGICK_VERSION=3.7.0
 ARG PECL_REDIS_VERSION=5.3.7
+ARG PECL_XMLRPC_VERSION=1.0.0RC3
 
 ARG EXTENSION_VERSION=20210902
 
@@ -36,7 +37,7 @@ RUN : \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
-    && apk upgrade curl \
+    && apk upgrade curl openssl \
     && apk add --update --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         build-base \
@@ -58,6 +59,7 @@ RUN : \
         freetype-dev \
         bzip2-dev \
         libexif-dev \
+        xmlrpc-c-dev \
         pcre-dev \
         gettext-dev \
         libxslt-dev \
@@ -168,7 +170,15 @@ RUN : \
         && make \
         && make install ) \
     && rm -rf redis-$PECL_REDIS_VERSION.tgz redis-$PECL_REDIS_VERSION \
-    && docker-php-ext-enable sodium yaml msgpack redis \
+    && pecl download xmlrpc-$PECL_XMLRPC_VERSION \
+    && tar xf xmlrpc-$PECL_XMLRPC_VERSION.tgz \
+    && (cd xmlrpc-$PECL_XMLRPC_VERSION \
+    && phpize \
+    && ./configure \
+    && make \
+    && make install ) \
+    && rm -rf xmlrpc-$PECL_XMLRPC_VERSION.tgz xmlrpc-$PECL_XMLRPC_VERSION \
+    && docker-php-ext-enable sodium yaml msgpack redis xmlrpc \
     && docker-php-source delete \
     && strip /usr/local/lib/php/extensions/no-debug-non-zts-${EXTENSION_VERSION}/*.so \
     && apk add --no-cache --virtual .gettext gettext \
