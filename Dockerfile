@@ -37,7 +37,6 @@ RUN : \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
-    && apk upgrade curl openssl \
     && apk add --update --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         build-base \
