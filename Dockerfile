@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.1.9
+ARG APP_VERSION=8.1.10
 ARG OS_VERSION=alpine3.16
 FROM --platform=$BUILDPLATFORM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
@@ -29,15 +29,14 @@ COPY files/docker-entrypoint.sh /usr/local/bin
 WORKDIR /tmp
 # add user
 RUN : \
-    && apk update \
-    && apk add --virtual .user shadow \
+    && apk add --no-cache --virtual .user shadow \
     && groupadd -g 1001 www \
     && useradd -d /var/lib/www -s /bin/nologin -g www -M -u 1001 httpd \
     && groupadd -g 1000 kusanagi \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
-    && apk add --update --no-cache --virtual .build-php \
+    && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         build-base \
         automake \
@@ -65,7 +64,7 @@ RUN : \
         openldap-dev \
         imap-dev \
         icu-dev \
-        curl \
+        curl=7.83.1-r3 \
         imagemagick \
         imagemagick-dev \
         libsodium \
@@ -73,7 +72,7 @@ RUN : \
         gettext \
         argon2-dev \
         coreutils \
-        curl-dev \
+        curl-dev=7.83.1-r3 \
         libjpeg-turbo-dev \
         libedit-dev \
         libxml2-dev \
@@ -200,7 +199,7 @@ RUN : \
     && rm -f /usr/local/etc/php/conf.d/docker-php-ext-apc.ini \
     && rm -f /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini \
     && rm -rf /tmp/mozjpeg* /tmp/pear /usr/include /usr/lib/pkgconfig /usr/lib/*a /usr/share/doc /usr/share/man \
-    && apk add pngquant optipng jpegoptim ssmtp \
+    && apk add --no-cache pngquant optipng jpegoptim ssmtp \
     && chown httpd /etc/ssmtp /etc/ssmtp/ssmtp.conf \
     && mv /tmp/libturbojpeg.so.0.2.0 /tmp/libjpeg.so.62.3.0 /usr/lib64 \
     && mkdir -p /etc/php.d/conf.d /etc/php-fpm.d \
