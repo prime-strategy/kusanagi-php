@@ -36,7 +36,7 @@ RUN : \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
-    && apk add --update --no-cache --virtual .build-php \
+    && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         build-base \
         automake \
@@ -64,7 +64,7 @@ RUN : \
         openldap-dev \
         imap-dev \
         icu-dev \
-        curl \
+        curl=7.83.1-r3 \
         imagemagick \
         imagemagick-dev \
         libsodium \
@@ -72,7 +72,7 @@ RUN : \
         gettext \
         argon2-dev \
         coreutils \
-        curl-dev \
+        curl-dev=7.83.1-r3 \
         libjpeg-turbo-dev \
         libedit-dev \
         libxml2-dev \
