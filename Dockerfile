@@ -8,7 +8,7 @@ LABEL maintainer=kusanagi@prime-strategy.co.jp
 
 # Environment variable
 ARG APCU_VERSION=5.1.22
-ARG MOZJPEG_VERSION=4.0.3
+ARG MOZJPEG_VERSION=4.1.1
 ARG PECL_SODIUM_VERSION=2.0.23
 ARG PECL_YAML_VERSION=2.2.2
 ARG PECL_SSH2_VERSION=1.3.1
@@ -64,7 +64,7 @@ RUN : \
         openldap-dev \
         imap-dev \
         icu-dev \
-        curl=7.83.1-r4 \
+        curl=7.83.1-r5 \
         imagemagick \
         imagemagick-dev \
         libsodium \
