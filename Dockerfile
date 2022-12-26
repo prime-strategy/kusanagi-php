@@ -7,7 +7,7 @@ FROM --platform=$BUILDPLATFORM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
 
 # Environment variable
-ARG MOZJPEG_VERSION=4.0.3
+ARG MOZJPEG_VERSION=4.1.1
 ARG APCU_VERSION=5.1.22
 ARG APCU_BC_VERSION=1.0.5
 ARG PECL_IMAGICK_VERSION=3.7.0
@@ -64,7 +64,7 @@ RUN : \
         openldap-dev \
         imap-dev \
         icu-dev \
-        curl=7.83.1-r4 \
+        curl=7.83.1-r5 \
         imagemagick \
         imagemagick-dev \
         libsodium \
@@ -72,7 +72,7 @@ RUN : \
         gettext \
         argon2-dev \
         coreutils \
-        curl-dev=7.83.1-r4 \
+        curl-dev=7.83.1-r5 \
         libjpeg-turbo-dev \
         libedit-dev \
         libxml2-dev \
@@ -86,7 +86,7 @@ RUN : \
         libffi-dev \
     && cd /tmp \
 # mozjpeg
-    && curl -LO https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz#//mozjpeg-${MOZJPEG_VERSION}.tar.gz \
+    && curl -L https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz -o mozjpeg-${MOZJPEG_VERSION}.tar.gz \
     && tar xf mozjpeg-${MOZJPEG_VERSION}.tar.gz \
     && cd mozjpeg-${MOZJPEG_VERSION} \
     && mkdir build && cd build \
