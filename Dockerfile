@@ -2,13 +2,13 @@
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
 ARG APP_VERSION=8.1.13
-ARG OS_VERSION=alpine3.16
+ARG OS_VERSION=alpine3.17
 FROM --platform=$BUILDPLATFORM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
 
 # Environment variable
 ARG APCU_VERSION=5.1.22
-ARG MOZJPEG_VERSION=4.0.3
+ARG MOZJPEG_VERSION=4.1.1
 ARG PECL_SODIUM_VERSION=2.0.23
 ARG PECL_YAML_VERSION=2.2.2
 ARG PECL_SSH2_VERSION=1.3.1
@@ -64,7 +64,7 @@ RUN : \
         openldap-dev \
         imap-dev \
         icu-dev \
-        curl=7.83.1-r4 \
+        curl=7.87.0-r0 \
         imagemagick \
         imagemagick-dev \
         libsodium \
@@ -85,7 +85,7 @@ RUN : \
         tidyhtml-dev \
         libffi-dev \
 # mozjpeg
-    && curl -LO https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz#//mozjpeg-${MOZJPEG_VERSION}.tar.gz \
+    && curl -L https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz  -o mozjpeg-${MOZJPEG_VERSION}.tar.gz \
     && tar xf mozjpeg-${MOZJPEG_VERSION}.tar.gz \
     && (cd mozjpeg-${MOZJPEG_VERSION} \
         && mkdir build && cd build \
