@@ -1,8 +1,8 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.0.27
-ARG OS_VERSION=alpine3.16
+ARG APP_VERSION=8.2.1
+ARG OS_VERSION=alpine3.17
 FROM --platform=$BUILDPLATFORM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
 
@@ -17,7 +17,7 @@ ARG PECL_IMAGICK_VERSION=3.7.0
 ARG PECL_REDIS_VERSION=5.3.7
 ARG PECL_XMLRPC_VERSION=1.0.0RC3
 
-ARG EXTENSION_VERSION=20200930
+ARG EXTENSION_VERSION=20220829
 
 COPY files/*.ini /usr/local/etc/php/conf.d/
 COPY files/opcache*.blacklist /usr/local/etc/php.d/
@@ -64,7 +64,7 @@ RUN : \
         openldap-dev \
         imap-dev \
         icu-dev \
-        curl=7.83.1-r5 \
+        curl=7.87.0-r0 \
         imagemagick \
         imagemagick-dev \
         libsodium \
@@ -76,7 +76,8 @@ RUN : \
         libjpeg-turbo-dev \
         libedit-dev \
         libxml2-dev \
-        openssl-dev \
+        openssl=3.0.7-r2 \
+        openssl-dev=3.0.7-r2 \
         sqlite-dev \
         yaml-dev \
         libssh2-dev \
@@ -85,7 +86,7 @@ RUN : \
         tidyhtml-dev \
         libffi-dev \
 # mozjpeg
-    && curl -LO https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz#//mozjpeg-${MOZJPEG_VERSION}.tar.gz \
+    && curl -L https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz  -o mozjpeg-${MOZJPEG_VERSION}.tar.gz \
     && tar xf mozjpeg-${MOZJPEG_VERSION}.tar.gz \
     && (cd mozjpeg-${MOZJPEG_VERSION} \
         && mkdir build && cd build \
@@ -106,7 +107,7 @@ RUN : \
             /tmp \
         && cp /usr/bin/mogrify /tmp ) \
 \
-# PHP8.0
+# PHP8.2
 \
     && pecl channel-update pecl.php.net \
     && docker-php-ext-configure gd \
