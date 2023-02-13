@@ -64,7 +64,7 @@ RUN : \
         openldap-dev \
         imap-dev \
         icu-dev \
-        curl=7.87.0-r0 \
+        curl=7.87.0-r1 \
         imagemagick \
         imagemagick-dev \
         libsodium \
@@ -76,8 +76,8 @@ RUN : \
         libjpeg-turbo-dev \
         libedit-dev \
         libxml2-dev \
-        openssl=3.0.7-r2 \
-        openssl-dev=3.0.7-r2 \
+        openssl=3.0.8-r0 \
+        openssl-dev=3.0.8-r0 \
         sqlite-dev \
         yaml-dev \
         libssh2-dev \
