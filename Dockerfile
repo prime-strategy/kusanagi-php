@@ -76,7 +76,7 @@ RUN : \
         libjpeg-turbo-dev \
         libedit-dev \
         libxml2-dev \
-        openssl-dev \
+        openssl-dev=1.1.1t-r0 \
         sqlite-dev \
         yaml-dev \
         libssh2-dev \
