@@ -21,7 +21,7 @@
 #// generate ssmtp configuration file
 #//---------------------------------------------------------------------------
 [ "x$MAILSERVER" != "x" ] && \
-	sed -i 's/mailhub=.*$/mailhub=$MAILSERVER/' /etc/ssmtp/ssmtp.conf ;
+	sed -i "s/mailhub=.*$/mailhub=$MAILSERVER/" /etc/ssmtp/ssmtp.conf ;
 [ "x$MAILDOMAIN" != "x" ] && \
 	echo "rewriteDomain=$MAILDOMAIN" >> /etc/ssmtp/ssmtp.conf
 [ "x$MAILUSER" != "x" -a "x$MAILPASS" != "x" ] && \
