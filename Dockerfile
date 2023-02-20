@@ -64,7 +64,7 @@ RUN : \
         openldap-dev \
         imap-dev \
         icu-dev \
-        curl=7.87.0-r1 \
+        curl=7.87.0-r2 \
         imagemagick \
         imagemagick-dev \
         libsodium \
@@ -72,7 +72,7 @@ RUN : \
         gettext \
         argon2-dev \
         coreutils \
-        curl-dev \
+        curl-dev=7.87.0-r2 \
         libjpeg-turbo-dev \
         libedit-dev \
         libxml2-dev \
@@ -191,10 +191,10 @@ RUN : \
             | grep -v jpeg \
             | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
     )" \
-    && apk del .gettext \
+    && apk del --purge .gettext \
     && echo $runDeps \
     && apk add --no-cache --virtual .php-rundeps $runDeps \
-    && apk del .build-php \
+    && apk del --purge .build-php \
     && mv /tmp/envsubst /usr/bin/envsubst \
     && mv /tmp/mogrify /usr/bin \
     && rm -f /usr/local/etc/php/conf.d/docker-php-ext-apc.ini \
