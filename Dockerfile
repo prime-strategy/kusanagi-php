@@ -64,7 +64,8 @@ RUN : \
         openldap-dev \
         imap-dev \
         icu-dev \
-        curl=7.87.0-r1 \
+        curl=7.87.0-r2 \
+        curl-dev=7.87.0-r2 \
         imagemagick \
         imagemagick-dev \
         libsodium \
@@ -72,7 +73,6 @@ RUN : \
         gettext \
         argon2-dev \
         coreutils \
-        curl-dev \
         libjpeg-turbo-dev \
         libedit-dev \
         libxml2-dev \
