@@ -85,6 +85,7 @@ RUN : \
         libgpg-error-dev \
         tidyhtml-dev \
         libffi-dev \
+        tar=1.34-r2 \
 # mozjpeg
     && curl -L https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz  -o mozjpeg-${MOZJPEG_VERSION}.tar.gz \
     && tar xf mozjpeg-${MOZJPEG_VERSION}.tar.gz \
