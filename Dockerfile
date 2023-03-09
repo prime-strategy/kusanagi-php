@@ -194,7 +194,7 @@ RUN : \
     )" \
     && apk del .gettext \
     && echo $runDeps \
-    && apk add --no-cache --virtual .php-rundeps $runDeps \
+    && apk add --no-cache --virtual .php-rundeps $runDeps imagemagick \
     && apk del .build-php \
     && mv /tmp/envsubst /usr/bin/envsubst \
     && mv /tmp/mogrify /usr/bin \
