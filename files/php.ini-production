@@ -158,11 +158,13 @@
 ;   Default Value: Off
 ;   Development Value: Off
 ;   Production Value: On
+zend.exception_ignore_args = On
 
 ; zend.exception_string_param_max_len
 ;   Default Value: 15
 ;   Development Value: 15
 ;   Production Value: 0
+zend.exception_string_param_max_len = 0
 
 ;;;;;;;;;;;;;;;;;;;;
 ; php.ini Options  ;
@@ -309,7 +311,7 @@ unserialize_callback_func =
 ; The value is also used for json_encode when encoding double values.
 ; If -1 is used, then dtoa mode 0 is used which automatically select the best
 ; precision.
-serialize_precision = 17
+serialize_precision = -1
 
 ; open_basedir, if set, limits all file operations to the defined directory
 ; and below.  This directive makes most sense if used in a per-directory
@@ -377,6 +379,7 @@ zend.enable_gc = On
 ; Default Value: Off
 ; Development Value: Off
 ; Production Value: On
+zend.exception_ignore_args = On
 
 ; Allows setting the maximum string length in an argument of a stringified stack trace
 ; to a value between 0 and 1000000.
@@ -386,6 +389,7 @@ zend.enable_gc = On
 ; Production Value: 0
 ; In production, it is recommended to set this to 0 to reduce the output
 ; of sensitive information in stack traces.
+zend.exception_string_param_max_len = 0
 
 ;;;;;;;;;;;;;;;;;
 ; Miscellaneous ;
@@ -500,6 +504,7 @@ error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT
 ; Development Value: On
 ; Production Value: Off
 ; http://php.net/display-errors
+display_errors = Off
 
 ; The display of errors which occur during PHP's startup sequence are handled
 ; separately from display_errors. We strongly recommend you set this to 'off'
@@ -508,7 +513,6 @@ error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT
 ; Development Value: On
 ; Production Value: Off
 ; http://php.net/display-startup-errors
-display_errors = Off
 display_startup_errors = Off
 
 ; Besides displaying errors, PHP can also log errors to locations such as a
@@ -744,13 +748,13 @@ default_charset = "UTF-8"
 
 ; UNIX: "/path1:/path2"
 ;include_path = ".:/php/includes"
-include_path = ".:/usr/local/php/lib/php"
 ;
 ; Windows: "\path1;\path2"
 ;include_path = ".;c:\php\includes"
 ;
 ; PHP's default setting for include_path is ".;/path/to/php/pear"
 ; http://php.net/include-path
+include_path = ".:/usr/local/php/lib/php"
 
 ; The root of the PHP pages, used only if nonempty.
 ; if PHP was not compiled with FORCE_REDIRECT, you SHOULD set doc_root
@@ -770,7 +774,6 @@ user_dir =
 ;extension_dir = "./"
 ; On windows:
 ;extension_dir = "ext"
-extension_dir = "/usr/local/lib/php/extensions/no-debug-non-zts-20200930"
 
 ; Directory where the temporary files should be placed.
 ; Defaults to the system default (see sys_get_temp_dir)
@@ -1166,8 +1169,6 @@ mysqli.allow_persistent = On
 ; Maximum number of links.  -1 means no limit.
 ; http://php.net/mysqli.max-links
 mysqli.max_links = -1
-
-mysqli.cache_size = 2000
 
 ; Default port number for mysqli_connect().  If unset, mysqli_connect() will use
 ; the $MYSQL_TCP_PORT or the mysql-tcp entry in /etc/services or the
@@ -1948,7 +1949,7 @@ ldap.max_links = -1
 ; "preload" - enabled in CLI scripts and preloaded files (default)
 ; "false"   - always disabled
 ; "true"    - always enabled
-ffi.enable=true
+;ffi.enable=preload
 
 ; List of headers files to preload, wildcard patterns allowed.
 ;ffi.preload=

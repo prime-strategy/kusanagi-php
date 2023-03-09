@@ -10,7 +10,7 @@ LABEL maintainer=kusanagi@prime-strategy.co.jp
 ARG APCU_VERSION=5.1.22
 ARG MOZJPEG_VERSION=4.1.1
 ARG PECL_SODIUM_VERSION=2.0.23
-ARG PECL_YAML_VERSION=2.2.2
+ARG PECL_YAML_VERSION=2.2.3
 ARG PECL_SSH2_VERSION=1.3.1
 ARG PECL_MSGPACK_VERSION=2.1.2
 ARG PECL_IMAGICK_VERSION=3.7.0
@@ -21,9 +21,10 @@ ARG EXTENSION_VERSION=20200930
 
 COPY files/*.ini /usr/local/etc/php/conf.d/
 COPY files/opcache*.blacklist /usr/local/etc/php.d/
+COPY files/preload.php /usr/local/etc/php.d/
 COPY files/www.conf /usr/local/etc/php-fpm.d/www.conf.template
 COPY files/php-fpm.conf /usr/local/etc/php-fpm.conf
-COPY files/php.ini-production /usr/local/etc/php.conf
+COPY files/php.ini-production /usr/local/etc/php/php.ini
 COPY files/docker-entrypoint.sh /usr/local/bin
 
 WORKDIR /tmp
@@ -177,7 +178,7 @@ RUN : \
     && make install ) \
     && rm -rf xmlrpc-$PECL_XMLRPC_VERSION.tgz xmlrpc-$PECL_XMLRPC_VERSION \
     && docker-php-source delete \
-    && docker-php-ext-enable sodium yaml apcu msgpack redis xmlrpc \
+    && docker-php-ext-enable sodium ssh2 yaml apcu msgpack imagick redis xmlrpc \
     && strip /usr/local/lib/php/extensions/no-debug-non-zts-${EXTENSION_VERSION}/*.so \
     && apk add --no-cache --virtual .gettext gettext \
     && mv /usr/bin/envsubst /tmp/ \
@@ -190,15 +191,17 @@ RUN : \
             | grep -v jpeg \
             | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
     )" \
-    && apk del .gettext \
+    && apk del --purge .gettext \
     && echo $runDeps \
     && apk add --no-cache --virtual .php-rundeps $runDeps \
-    && apk del .build-php \
+    && apk del --purge .build-php \
     && mv /tmp/envsubst /usr/bin/envsubst \
     && mv /tmp/mogrify /usr/bin \
     && rm -f /usr/local/etc/php/conf.d/docker-php-ext-apc.ini \
     && rm -f /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini \
+    && rm -f /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini \
     && rm -f /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini \
+    && rm -f /usr/local/etc/php/conf.d/docker-fpm.ini \
     && rm -rf /tmp/mozjpeg* /tmp/pear /usr/include /usr/lib/pkgconfig /usr/lib/*a /usr/share/doc /usr/share/man \
     && apk add --no-cache pngquant optipng jpegoptim ssmtp \
     && chown httpd /etc/ssmtp /etc/ssmtp/ssmtp.conf \
@@ -224,7 +227,7 @@ RUN : \
 RUN apk add --no-cache --virtual .curl curl \
     && curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/master/contrib/install.sh | sh -s -- -b /tmp \
     && /tmp/trivy filesystem --skip-files /tmp/trivy --exit-code 1 --no-progress / \
-    && apk del .curl \
+    && apk del --purge .curl \
     && rm /tmp/trivy \
     && :
 
