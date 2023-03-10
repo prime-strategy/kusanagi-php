@@ -15,21 +15,21 @@ ARG PECL_MSGPACK_VERSION=2.1.2
 ARG PECL_REDIS_VERSION=5.3.7
 ARG PECL_SODIUM_VERSION=2.0.23
 ARG PECL_SSH2_VERSION=1.3.1
-ARG PECL_YAML_VERSION=2.2.2
+ARG PECL_YAML_VERSION=2.2.3
 
 ARG EXTENSION_VERSION=20190902
 
 COPY files/*.ini /usr/local/etc/php/conf.d/
 COPY files/opcache*.blacklist /usr/local/etc/php.d/
+COPY files/preload.php /usr/local/etc/php.d/
 COPY files/www.conf /usr/local/etc/php-fpm.d/www.conf.template
 COPY files/php7-fpm.conf /usr/local/etc/php-fpm.conf
-COPY files/php.ini-production /usr/local/etc/php.conf
+COPY files/php.ini-production /usr/local/etc/php/php.ini
 COPY files/docker-entrypoint.sh /usr/local/bin
 
 # add user
 RUN : \
-    && apk update \
-    && apk add --virtual .user shadow \
+    && apk add --no-cache --virtual .user shadow \
     && groupadd -g 1001 www \
     && useradd -d /var/lib/www -s /bin/nologin -g www -M -u 1001 httpd \
     && groupadd -g 1000 kusanagi \
@@ -186,17 +186,19 @@ RUN : \
             | grep -v jpeg \
             | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
     )" \
-    && apk del .gettext \
-    && apk add --no-cache --virtual .php-rundeps $runDeps \
-    && apk del .build-php \
+    && apk del --purge .gettext \
+    && apk add --no-cache --virtual .php-rundeps $runDeps imagemagick \
+    && apk del --purge .build-php \
     && mv /tmp/envsubst /usr/bin/envsubst \
     && cd / \
     && mv /tmp/mogrify /usr/bin \
     && rm -f /usr/local/etc/php/conf.d/docker-php-ext-apc.ini \
     && rm -f /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini \
+    && rm -f /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini \
     && rm -f /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini \
+    && rm -f /usr/local/etc/php/conf.d/docker-fpm.ini \
     && rm -rf /tmp/mozjpeg* /tmp/pear /usr/include /usr/lib/pkgconfig /usr/lib/*a /usr/share/doc /usr/share/man \
-    && apk add pngquant optipng jpegoptim ssmtp \
+    && apk add --no-cache pngquant optipng jpegoptim ssmtp \
     && chown httpd /etc/ssmtp /etc/ssmtp/ssmtp.conf \
     && mv /tmp/libturbojpeg.so.0.2.0 /tmp/libjpeg.so.8.2.2 /usr/lib \
     && mkdir -p /etc/php7.d/conf.d /etc/php7-fpm.d \
@@ -219,9 +221,9 @@ RUN : \
     && :
 
 RUN apk add --no-cache --virtual .curl curl \
-	&& curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /tmp \
+    && curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /tmp \
     && /tmp/trivy filesystem --skip-files /tmp/trivy --exit-code 1 --no-progress / \
-    && apk del .curl \
+    && apk del --purge .curl \
     && rm /tmp/trivy \
     && :
 
