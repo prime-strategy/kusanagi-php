@@ -17,6 +17,7 @@ ARG PECL_SODIUM_VERSION=2.0.23
 ARG PECL_SSH2_VERSION=1.3.1
 ARG PECL_YAML_VERSION=2.2.3
 
+
 ARG EXTENSION_VERSION=20190902
 
 COPY files/*.ini /usr/local/etc/php/conf.d/
@@ -117,6 +118,7 @@ RUN : \
         --with-webp \
         --with-jpeg \
         --with-xpm \
+    && docker-php-ext-configure sockets CFLAGS="-D_GNU_SOURCE" \
     && docker-php-ext-install \
         mysqli \
         pgsql \
@@ -201,14 +203,11 @@ RUN : \
     && apk add --no-cache pngquant optipng jpegoptim ssmtp \
     && chown httpd /etc/ssmtp /etc/ssmtp/ssmtp.conf \
     && mv /tmp/libturbojpeg.so.0.2.0 /tmp/libjpeg.so.8.2.2 /usr/lib \
-    && mkdir -p /etc/php7.d/conf.d /etc/php7-fpm.d \
-    && cp /usr/local/etc/php/conf.d/* /etc/php7.d/conf.d/ \
-    && cp /usr/local/etc/php-fpm.d/* /etc/php7-fpm.d/ \
-    && mkdir -p /var/log/php7-fpm \
-    && ln -sf /dev/stdout /var/log/php7-fpm/www-error.log \
-    && ln -sf /dev/stderr /var/log/php7-fpm/www-slow.log \
-    && mkdir -p /var/lib/php7/session /var/lib/php7/wsdlcache  \
-    && chown httpd:www /var/lib/php7/session /var/lib/php7/wsdlcache \
+    && mkdir -p /var/log/php-fpm \
+    && ln -sf /dev/stdout /var/log/php-fpm/www-error.log \
+    && ln -sf /dev/stderr /var/log/php-fpm/www-slow.log \
+    && mkdir -p /var/lib/php/session /var/lib/php/wsdlcache  \
+    && chown httpd:www /var/lib/php/session /var/lib/php/wsdlcache \
     && echo mysqli.default_socket=/var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-mysqli.ini \
     && echo pdo_mysql.default_socket = /var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-pdo_mysql.ini \
     && cd /tmp \
