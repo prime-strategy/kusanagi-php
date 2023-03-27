@@ -73,12 +73,13 @@ RUN : \
         gettext \
         argon2-dev \
         coreutils \
-        curl-dev=7.88.1-r0 \
+        curl=7.88.1-r1 \
+        curl-dev=7.88.1-r1 \
         libjpeg-turbo-dev \
         libedit-dev \
         libxml2-dev \
-        openssl=3.0.8-r0 \
-        openssl-dev=3.0.8-r0 \
+        openssl=3.0.8-r1 \
+        openssl-dev=3.0.8-r1 \
         sqlite-dev \
         yaml-dev \
         libssh2-dev \
