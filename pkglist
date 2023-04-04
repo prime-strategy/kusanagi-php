@@ -39,9 +39,9 @@ libacl-2.3.1-r0
 libblkid-2.38-r1
 libbz2-1.0.8-r1
 libc-utils-0.7.2-r3
-libcrypto1.1-1.1.1t-r1
+libcrypto1.1-1.1.1t-r2
 libcurl-7.83.1-r6
-libde265-1.0.11-r0
+libde265-1.0.11-r1
 libffi-3.4.2-r1
 libgcc-11.2.1_git20220219-r2
 libgcrypt-1.10.1-r0
@@ -63,7 +63,7 @@ libsasl-2.1.28-r1
 libsm-1.2.3-r0
 libsodium-1.0.18-r0
 libssh2-1.10.0-r2
-libssl1.1-1.1.1t-r1
+libssl1.1-1.1.1t-r2
 libstdc++-11.2.1_git20220219-r2
 libtasn1-4.18.0-r1
 libunistring-1.0-r0
@@ -89,7 +89,7 @@ nettle-3.7.3-r0
 nghttp2-libs-1.47.0-r0
 numactl-2.0.14-r0
 oniguruma-6.9.8-r0
-openssl-1.1.1t-r1
+openssl-1.1.1t-r2
 optipng-0.7.7-r0
 p11-kit-0.24.1-r0
 pango-1.50.7-r0

@@ -37,6 +37,7 @@ RUN : \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
+    && OPENSSL_VERSION=1.1.1t-r2 \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         build-base \
@@ -77,8 +78,8 @@ RUN : \
         libjpeg-turbo-dev \
         libedit-dev \
         libxml2-dev \
-        openssl=1.1.1t-r1 \
-        openssl-dev=1.1.1t-r1 \
+        openssl=${OPENSSL_VERSION} \
+        openssl-dev=${OPENSSL_VERSION} \
         sqlite-dev \
         yaml-dev \
         libssh2-dev \
