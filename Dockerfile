@@ -36,6 +36,8 @@ RUN : \
     && groupadd -g 1000 kusanagi \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
+    && CURL_VERSIOH=7.88.1-r1 \
+    && OPENSSL_VERSION=3.0.8-r3 \
     && apk del --purge .user \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
@@ -73,13 +75,13 @@ RUN : \
         gettext \
         argon2-dev \
         coreutils \
-        curl=7.88.1-r1 \
-        curl-dev=7.88.1-r1 \
+        curl=${CURL_VERSIOH} \
+        curl-dev=${CURL_VERSIOH} \
         libjpeg-turbo-dev \
         libedit-dev \
         libxml2-dev \
-        openssl=3.0.8-r1 \
-        openssl-dev=3.0.8-r1 \
+        openssl=${OPENSSL_VERSION} \
+        openssl-dev=${OPENSSL_VERSION} \
         sqlite-dev \
         yaml-dev \
         libssh2-dev \
