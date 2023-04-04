@@ -37,6 +37,8 @@ RUN : \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
+    && CURL_VERSION=7.88.1-r1 \
+    && OPENSSL_VERSION=3.0.8-r3 \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         build-base \
@@ -65,8 +67,8 @@ RUN : \
         openldap-dev \
         imap-dev \
         icu-dev \
-        curl=7.88.1-r1 \
-        curl-dev=7.88.1-r1 \
+        curl=${CURL_VERSION} \
+        curl-dev=${CURL_VERSION} \
         imagemagick \
         imagemagick-dev \
         libsodium \
@@ -77,8 +79,8 @@ RUN : \
         libjpeg-turbo-dev \
         libedit-dev \
         libxml2-dev \
-        openssl=3.0.8-r1 \
-        openssl-dev=3.0.8-r1 \
+        openssl=${OPENSSL_VERSION} \
+        openssl-dev=${OPENSSL_VERSION} \
         sqlite-dev \
         yaml-dev \
         libssh2-dev \
