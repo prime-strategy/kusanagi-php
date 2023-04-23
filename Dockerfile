@@ -37,6 +37,7 @@ RUN : \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
+    && CURL_VERSION=8.0.1-r0 \
     && OPENSSL_VERSION=1.1.1t-r2 \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
@@ -66,7 +67,8 @@ RUN : \
         openldap-dev \
         imap-dev \
         icu-dev \
-        curl=7.83.1-r6 \
+        curl=${CURL_VERSION} \
+        curl-dev=${CURL_VERSION} \
         imagemagick \
         imagemagick-dev \
         libsodium \
@@ -74,7 +76,6 @@ RUN : \
         gettext \
         argon2-dev \
         coreutils \
-        curl-dev=7.83.1-r6 \
         libjpeg-turbo-dev \
         libedit-dev \
         libxml2-dev \
@@ -89,7 +90,7 @@ RUN : \
         libffi-dev \
         tar=1.34-r1 \
 # mozjpeg
-    && curl -LO https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz#//mozjpeg-${MOZJPEG_VERSION}.tar.gz \
+    && curl -L https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz -o mozjpeg-${MOZJPEG_VERSION}.tar.gz \
     && tar xf mozjpeg-${MOZJPEG_VERSION}.tar.gz \
     && (cd mozjpeg-${MOZJPEG_VERSION} \
         && mkdir build && cd build \
