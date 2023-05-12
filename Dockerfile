@@ -1,8 +1,8 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.2.5
-ARG OS_VERSION=alpine3.17
+ARG APP_VERSION=8.2.6
+ARG OS_VERSION=alpine3.18
 FROM --platform=$BUILDPLATFORM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
 
@@ -11,7 +11,7 @@ ARG APCU_VERSION=5.1.22
 ARG MOZJPEG_VERSION=4.1.1
 ARG PECL_SODIUM_VERSION=2.0.23
 ARG PECL_YAML_VERSION=2.2.3
-ARG PECL_SSH2_VERSION=1.3.1
+ARG PECL_SSH2_VERSION=1.4
 ARG PECL_MSGPACK_VERSION=2.1.2
 ARG PECL_IMAGICK_VERSION=3.7.0
 ARG PECL_REDIS_VERSION=5.3.7
@@ -37,8 +37,8 @@ RUN : \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
-    && CURL_VERSION=8.0.1-r0 \
-    && OPENSSL_VERSION=3.0.8-r4 \
+    && CURL_VERSION=8.0.1-r2 \
+    && OPENSSL_VERSION=3.1.0-r4 \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         build-base \
@@ -88,7 +88,7 @@ RUN : \
         libgpg-error-dev \
         tidyhtml-dev \
         libffi-dev \
-        tar=1.34-r2 \
+        tar \
 # mozjpeg
     && curl -L https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz  -o mozjpeg-${MOZJPEG_VERSION}.tar.gz \
     && tar xf mozjpeg-${MOZJPEG_VERSION}.tar.gz \
