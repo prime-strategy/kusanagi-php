@@ -1,8 +1,8 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.1.18
-ARG OS_VERSION=alpine3.17
+ARG APP_VERSION=8.1.19
+ARG OS_VERSION=alpine3.18
 FROM --platform=$BUILDPLATFORM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
 
@@ -11,7 +11,7 @@ ARG APCU_VERSION=5.1.22
 ARG MOZJPEG_VERSION=4.1.1
 ARG PECL_SODIUM_VERSION=2.0.23
 ARG PECL_YAML_VERSION=2.2.3
-ARG PECL_SSH2_VERSION=1.3.1
+ARG PECL_SSH2_VERSION=1.4
 ARG PECL_MSGPACK_VERSION=2.1.2
 ARG PECL_IMAGICK_VERSION=3.7.0
 ARG PECL_REDIS_VERSION=5.3.7
@@ -36,8 +36,8 @@ RUN : \
     && groupadd -g 1000 kusanagi \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
-    && CURL_VERSIOH=8.0.1-r0 \
-    && OPENSSL_VERSION=3.0.8-r4 \
+    && CURL_VERSIOH=8.0.1-r2 \
+    && OPENSSL_VERSION=3.1.0-r4 \
     && apk del --purge .user \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
@@ -67,7 +67,6 @@ RUN : \
         openldap-dev \
         imap-dev \
         icu-dev \
-        curl=7.88.1-r0 \
         imagemagick \
         imagemagick-dev \
         libsodium \
@@ -89,7 +88,7 @@ RUN : \
         libgpg-error-dev \
         tidyhtml-dev \
         libffi-dev \
-        tar=1.34-r2 \
+        tar \
 # mozjpeg
     && curl -L https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz  -o mozjpeg-${MOZJPEG_VERSION}.tar.gz \
     && tar xf mozjpeg-${MOZJPEG_VERSION}.tar.gz \
