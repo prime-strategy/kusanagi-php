@@ -2,7 +2,7 @@
 PHP7.4 FastCGI Server ( for KUSANAGI Runs on Docker )
 
 ## Versions(tags)
-- php-7.4.33-r11
+- php-7.4.33-r12
 
 ## Image Content
 - php-7.4.33-fpm-alpine3.16
