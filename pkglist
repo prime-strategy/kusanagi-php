@@ -13,8 +13,8 @@ ca-certificates-20230506-r0
 ca-certificates-bundle-20230506-r0
 cairo-1.17.8-r1
 cairo-gobject-1.17.8-r1
-cups-libs-2.4.2-r6
-curl-8.1.1-r1
+cups-libs-2.4.3-r0
+curl-8.1.2-r0
 dbus-libs-1.14.6-r3
 fontconfig-2.14.2-r3
 freetype-2.13.0-r5
@@ -40,8 +40,8 @@ libblkid-2.38.1-r7
 libbsd-0.11.7-r1
 libbz2-1.0.8-r5
 libc-utils-0.7.2-r5
-libcrypto3-3.1.0-r4
-libcurl-8.1.1-r1
+libcrypto3-3.1.1-r1
+libcurl-8.1.2-r0
 libde265-1.0.11-r2
 libexpat-2.5.0-r1
 libffi-3.4.4-r2
@@ -64,12 +64,12 @@ libncursesw-6.4_p20230506-r0
 libpng-1.6.39-r3
 libpq-15.3-r0
 libraw-0.21.1-r0
-librsvg-2.56.0-r5
+librsvg-2.56.1-r0
 libsasl-2.1.28-r4
 libsm-1.2.4-r1
 libsodium-1.0.18-r3
 libssh2-1.10.0-r4
-libssl3-3.1.0-r4
+libssl3-3.1.1-r1
 libstdc++-12.2.1_git20220924-r10
 libtasn1-4.19.0-r1
 libunistring-1.1-r1
@@ -94,7 +94,7 @@ nettle-3.8.1-r2
 nghttp2-libs-1.53.0-r0
 numactl-2.0.16-r4
 oniguruma-6.9.8-r1
-openssl-3.1.0-r4
+openssl-3.1.1-r1
 optipng-0.7.7-r1
 p11-kit-0.24.1-r2
 pango-1.50.14-r1
