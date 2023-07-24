@@ -12,7 +12,7 @@ ARG MOZJPEG_VERSION=4.1.1
 ARG PECL_SODIUM_VERSION=2.0.23
 ARG PECL_YAML_VERSION=2.2.3
 ARG PECL_SSH2_VERSION=1.4
-ARG PECL_MSGPACK_VERSION=2.1.2
+ARG PECL_MSGPACK_VERSION=2.2.0
 ARG PECL_IMAGICK_VERSION=3.7.0
 ARG PECL_REDIS_VERSION=5.3.7
 ARG PECL_XMLRPC_VERSION=1.0.0RC3
@@ -37,8 +37,8 @@ RUN : \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
-    && CURL_VERSION=8.1.2-r0 \
-    && OPENSSL_VERSION=3.1.1-r1 \
+    && CURL_VERSION=8.2.0-r1 \
+    && OPENSSL_VERSION=3.1.1-r3 \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         build-base \
