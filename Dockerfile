@@ -36,8 +36,8 @@ RUN : \
     && groupadd -g 1000 kusanagi \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
-    && CURL_VERSIOH=8.2.1-r0 \
-    && OPENSSL_VERSION=3.1.2-r0 \
+    && CURL_VERSIOH=8.3.0-r0 \
+    && OPENSSL_VERSION=3.1.3-r0 \
     && apk del --purge .user \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
