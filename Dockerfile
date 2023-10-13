@@ -14,7 +14,7 @@ ARG PECL_YAML_VERSION=2.2.3
 ARG PECL_SSH2_VERSION=1.4
 ARG PECL_MSGPACK_VERSION=2.2.0
 ARG PECL_IMAGICK_VERSION=3.7.0
-ARG PECL_REDIS_VERSION=5.3.7
+ARG PECL_REDIS_VERSION=6.0.1
 ARG PECL_XMLRPC_VERSION=1.0.0RC3
 
 ARG EXTENSION_VERSION=20200930
@@ -37,7 +37,7 @@ RUN : \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
-    && CURL_VERSION=8.3.0-r0 \
+    && CURL_VERSION=8.4.0-r0 \
     && OPENSSL_VERSION=1.1.1w-r0 \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
@@ -95,7 +95,7 @@ RUN : \
     && (cd mozjpeg-${MOZJPEG_VERSION} \
         && mkdir build && cd build \
         && cmake -DCMAKE_INSTALL_PREFIX=/usr -DPNG_SUPPORTED=FALSE -DWITH_MEM_SRCDST=TRUE .. \
-        && make install \
+        && make -j$(getconf _NPROCESSORS_ONLN) install \
         && ls -l /usr/lib/libjpeg* \
         && strip \
             /usr/bin/wrjpgcom \
@@ -108,8 +108,8 @@ RUN : \
             /usr/lib64/libjpeg.so.62.3.0 \
         && cp /usr/lib64/libturbojpeg.so.0.2.0 \
             /usr/lib64/libjpeg.so.62.3.0 \
-            /tmp \
-        && cp /usr/bin/mogrify /tmp ) \
+            /usr/bin/mogrify \
+            /tmp ) \
 \
 # PHP8.0
 \
@@ -149,16 +149,14 @@ RUN : \
     && (cd libsodium-$PECL_SODIUM_VERSION \
         && phpize \
         && ./configure \
-        && make \
-        && make install ) \
+        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
     && rm -rf libsodium-$PECL_SODIUM_VERSION.tgz libsodium-$PECL_SODIUM_VERSION \
     && pecl download ssh2-$PECL_SSH2_VERSION \
     && tar xf ssh2-$PECL_SSH2_VERSION.tgz \
     && (cd ssh2-$PECL_SSH2_VERSION \
         && phpize \
         && ./configure \
-        && make \
-        && make install ) \
+        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
     && rm -rf ssh2-$PECL_SSH2_VERSION.tgz ssh2-$PECL_SSH2_VERSION \
     && pecl install yaml-$PECL_YAML_VERSION \
     && pecl install apcu-$APCU_VERSION \
@@ -169,16 +167,14 @@ RUN : \
     && (cd redis-$PECL_REDIS_VERSION \
         && phpize \
         && ./configure  --enable-redis --enable-redis-msgpack --enable-redis-lzf \
-        && make \
-        && make install ) \
+        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
     && rm -rf redis-$PECL_REDIS_VERSION.tgz redis-$PECL_REDIS_VERSION \
     && pecl download xmlrpc-$PECL_XMLRPC_VERSION \
     && tar xf xmlrpc-$PECL_XMLRPC_VERSION.tgz \
     && (cd xmlrpc-$PECL_XMLRPC_VERSION \
-    && phpize \
-    && ./configure \
-    && make \
-    && make install ) \
+        && phpize \
+        && ./configure \
+        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
     && rm -rf xmlrpc-$PECL_XMLRPC_VERSION.tgz xmlrpc-$PECL_XMLRPC_VERSION \
     && docker-php-source delete \
     && docker-php-ext-enable sodium ssh2 yaml apcu msgpack imagick redis xmlrpc \
@@ -201,10 +197,10 @@ RUN : \
     && mv /tmp/envsubst /usr/bin/envsubst \
     && mv /tmp/mogrify /usr/bin \
     && rm -f /usr/local/etc/php/conf.d/docker-php-ext-apc.ini \
-    && rm -f /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini \
-    && rm -f /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini \
-    && rm -f /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini \
-    && rm -f /usr/local/etc/php/conf.d/docker-fpm.ini \
+             /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini \
+             /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini \
+             /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini \
+             /usr/local/etc/php/conf.d/docker-fpm.ini \
     && rm -rf /tmp/mozjpeg* /tmp/pear /usr/include /usr/lib/pkgconfig /usr/lib/*a /usr/share/doc /usr/share/man \
     && apk add --no-cache pngquant optipng jpegoptim ssmtp \
     && chown httpd /etc/ssmtp /etc/ssmtp/ssmtp.conf \
@@ -237,4 +233,5 @@ RUN apk add --no-cache --virtual .curl curl \
 USER httpd
 WORKDIR /var/lib/www/
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+HEALTHCHECK --interval=10s --timeout=5s CMD netstat -ltn| grep 9000 > /dev/null || exit 1
 CMD ["/usr/local/sbin/php-fpm", "--nodaemonize", "--fpm-config", "/usr/local/etc/php-fpm.conf"]

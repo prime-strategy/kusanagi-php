@@ -13,7 +13,7 @@ ca-certificates-bundle-20230506-r0
 cairo-1.17.4-r2
 cairo-gobject-1.17.4-r2
 cups-libs-2.4.2-r2
-curl-8.3.0-r0
+curl-8.4.0-r0
 dbus-libs-1.14.8-r0
 expat-2.5.0-r0
 fontconfig-2.14.0-r0
@@ -40,7 +40,7 @@ libblkid-2.38-r1
 libbz2-1.0.8-r1
 libc-utils-0.7.2-r3
 libcrypto1.1-1.1.1w-r0
-libcurl-8.3.0-r0
+libcurl-8.4.0-r0
 libde265-1.0.12-r0
 libffi-3.4.2-r1
 libgcc-11.2.1_git20220219-r2
