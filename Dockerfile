@@ -27,9 +27,8 @@ COPY files/php-fpm.conf /usr/local/etc/php-fpm.conf
 COPY files/php.ini-production /usr/local/etc/php/php.ini
 COPY files/docker-entrypoint.sh /usr/local/bin
 
-WORKDIR /tmp
 # add user
-RUN : \
+RUN cd /tmp \
     && apk add --no-cache --virtual .user shadow \
     && groupadd -g 1001 www \
     && useradd -d /var/lib/www -s /bin/nologin -g www -M -u 1001 httpd \
@@ -37,7 +36,7 @@ RUN : \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
-    && CURL_VERSION=8.3.0-r0 \
+    && CURL_VERSION=8.4.0-r0 \
     && OPENSSL_VERSION=3.1.3-r0 \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
@@ -95,7 +94,7 @@ RUN : \
     && (cd mozjpeg-${MOZJPEG_VERSION} \
         && mkdir build && cd build \
         && cmake -DCMAKE_INSTALL_PREFIX=/usr -DPNG_SUPPORTED=FALSE -DWITH_MEM_SRCDST=TRUE .. \
-        && make install \
+        && make -j$(getconf _NPROCESSORS_ONLN) install \
         && ls -l /usr/lib/libjpeg* \
         && strip \
             /usr/bin/wrjpgcom \
@@ -149,16 +148,14 @@ RUN : \
     && (cd libsodium-$PECL_SODIUM_VERSION \
         && phpize \
         && ./configure \
-        && make \
-        && make install ) \
+        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
     && rm -rf libsodium-$PECL_SODIUM_VERSION.tgz libsodium-$PECL_SODIUM_VERSION \
     && pecl download ssh2-$PECL_SSH2_VERSION \
     && tar xf ssh2-$PECL_SSH2_VERSION.tgz \
     && (cd ssh2-$PECL_SSH2_VERSION \
         && phpize \
         && ./configure \
-        && make \
-        && make install ) \
+        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
     && rm -rf ssh2-$PECL_SSH2_VERSION.tgz ssh2-$PECL_SSH2_VERSION \
     && pecl install yaml-$PECL_YAML_VERSION \
     && pecl install apcu-$APCU_VERSION \
@@ -169,16 +166,14 @@ RUN : \
     && (cd redis-$PECL_REDIS_VERSION \
         && phpize \
         && ./configure  --enable-redis --enable-redis-msgpack --enable-redis-lzf \
-        && make \
-        && make install ) \
+        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
     && rm -rf redis-$PECL_REDIS_VERSION.tgz redis-$PECL_REDIS_VERSION \
     && pecl download xmlrpc-$PECL_XMLRPC_VERSION \
     && tar xf xmlrpc-$PECL_XMLRPC_VERSION.tgz \
     && (cd xmlrpc-$PECL_XMLRPC_VERSION \
-    && phpize \
-    && ./configure \
-    && make \
-    && make install ) \
+        && phpize \
+        && ./configure \
+        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
     && rm -rf xmlrpc-$PECL_XMLRPC_VERSION.tgz xmlrpc-$PECL_XMLRPC_VERSION \
     && docker-php-source delete \
     && docker-php-ext-enable sodium ssh2 yaml apcu msgpack imagick redis xmlrpc \
@@ -237,4 +232,5 @@ RUN apk add --no-cache --virtual .curl curl \
 USER httpd
 WORKDIR /var/lib/www/
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+HEALTHCHECK --interval=10s --timeout=5s CMD netstat -ltn| grep 9000 > /dev/null || exit 1
 CMD ["/usr/local/sbin/php-fpm", "--nodaemonize", "--fpm-config", "/usr/local/etc/php-fpm.conf"]
