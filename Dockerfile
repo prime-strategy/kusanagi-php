@@ -6,6 +6,7 @@ ARG OS_VERSION=alpine3.18
 FROM --platform=$BUILDPLATFORM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
 
+
 # Environment variable
 ARG APCU_VERSION=5.1.22
 ARG MOZJPEG_VERSION=4.1.1
@@ -36,7 +37,7 @@ RUN : \
     && groupadd -g 1000 kusanagi \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
-    && CURL_VERSIOH=8.3.0-r0 \
+    && CURL_VERSIOH=8.4.0-r0 \
     && OPENSSL_VERSION=3.1.3-r0 \
     && apk del --purge .user \
     && apk add --no-cache --virtual .build-php \
@@ -89,13 +90,12 @@ RUN : \
         tidyhtml-dev \
         libffi-dev \
         tar \
-# mozjpeg
     && curl -L https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz  -o mozjpeg-${MOZJPEG_VERSION}.tar.gz \
     && tar xf mozjpeg-${MOZJPEG_VERSION}.tar.gz \
-    && (cd mozjpeg-${MOZJPEG_VERSION} \
-        && mkdir build && cd build \
-        && cmake -DCMAKE_INSTALL_PREFIX=/usr -DPNG_SUPPORTED=FALSE -DWITH_MEM_SRCDST=TRUE .. \
-        && make install \
+    && (cd  mozjpeg-${MOZJPEG_VERSION} \
+        && (mkdir build && cd  build \
+            && cmake -DCMAKE_INSTALL_PREFIX=/usr -DPNG_SUPPORTED=FALSE -DWITH_MEM_SRCDST=TRUE .. \
+            && make -j$(getconf _NPROCESSORS_ONLN) install ) \
         && ls -l /usr/lib/libjpeg* \
         && strip \
             /usr/bin/wrjpgcom \
@@ -108,10 +108,8 @@ RUN : \
             /usr/lib64/libjpeg.so.62.3.0 \
         && cp /usr/lib64/libturbojpeg.so.0.2.0 \
             /usr/lib64/libjpeg.so.62.3.0 \
-            /tmp \
-        && cp /usr/bin/mogrify /tmp ) \
-\
-# PHP8.1
+            /usr/bin/mogrify \
+            /tmp )\
 \
     && pecl channel-update pecl.php.net \
     && pecl install apcu-$APCU_VERSION \
@@ -148,38 +146,34 @@ RUN : \
         ffi \
     && pecl download libsodium-$PECL_SODIUM_VERSION \
     && tar xf libsodium-$PECL_SODIUM_VERSION.tgz \
-    && (cd libsodium-$PECL_SODIUM_VERSION \
+    && (cd  libsodium-$PECL_SODIUM_VERSION \
         && phpize \
         && ./configure \
-        && make \
-        && make install ) \
+        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
     && rm -rf libsodium-$PECL_SODIUM_VERSION.tgz libsodium-$PECL_SODIUM_VERSION \
     && pecl download ssh2-$PECL_SSH2_VERSION \
     && tar xf ssh2-$PECL_SSH2_VERSION.tgz \
-    && (cd ssh2-$PECL_SSH2_VERSION \
+    && (cd  ssh2-$PECL_SSH2_VERSION \
         && phpize \
         && ./configure \
-        && make \
-        && make install ) \
+        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
     && rm -rf ssh2-$PECL_SSH2_VERSION.tgz ssh2-$PECL_SSH2_VERSION \
     && pecl install yaml-$PECL_YAML_VERSION \
     && pecl install msgpack-$PECL_MSGPACK_VERSION \
     && pecl install imagick-$PECL_IMAGICK_VERSION \
     && pecl download redis-$PECL_REDIS_VERSION \
     && tar xf redis-$PECL_REDIS_VERSION.tgz \
-    && (cd redis-$PECL_REDIS_VERSION \
+    && (cd  redis-$PECL_REDIS_VERSION \
         && phpize \
         && ./configure  --enable-redis --enable-redis-msgpack --enable-redis-lzf \
-        && make \
-        && make install ) \
+        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
     && rm -rf redis-$PECL_REDIS_VERSION.tgz redis-$PECL_REDIS_VERSION \
     && pecl download xmlrpc-$PECL_XMLRPC_VERSION \
     && tar xf xmlrpc-$PECL_XMLRPC_VERSION.tgz \
-    && (cd xmlrpc-$PECL_XMLRPC_VERSION \
-    && phpize \
-    && ./configure \
-    && make \
-    && make install ) \
+    && (cd  xmlrpc-$PECL_XMLRPC_VERSION \
+        && phpize \
+        && ./configure \
+        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
     && rm -rf xmlrpc-$PECL_XMLRPC_VERSION.tgz xmlrpc-$PECL_XMLRPC_VERSION \
     && docker-php-ext-enable sodium ssh2 yaml msgpack imagick redis xmlrpc \
     && docker-php-source delete \
@@ -202,10 +196,10 @@ RUN : \
     && mv /tmp/envsubst /usr/bin/envsubst \
     && mv /tmp/mogrify /usr/bin \
     && rm -f /usr/local/etc/php/conf.d/docker-php-ext-apc.ini \
-    && rm -f /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini \
-    && rm -f /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini \
-    && rm -f /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini \
-    && rm -f /usr/local/etc/php/conf.d/docker-fpm.ini \
+             /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini \
+             /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini \
+             /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini \
+             /usr/local/etc/php/conf.d/docker-fpm.ini \
     && rm -rf /tmp/mozjpeg* /tmp/pear /usr/include /usr/lib/pkgconfig /usr/lib/*a /usr/share/doc /usr/share/man \
     && apk add --no-cache pngquant optipng jpegoptim ssmtp \
     && chown httpd /etc/ssmtp /etc/ssmtp/ssmtp.conf \
@@ -238,4 +232,5 @@ RUN apk add --no-cache --virtual .curl curl \
 USER httpd
 WORKDIR /var/lib/www/
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+HEALTHCHECK --interval=10s --timeout=5s CMD netstat -ltn| grep 9000 > /dev/null || exit 1
 CMD ["/usr/local/sbin/php-fpm", "--nodaemonize", "--fpm-config", "/usr/local/etc/php-fpm.conf"]
