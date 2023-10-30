@@ -37,7 +37,7 @@ RUN : \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
-    && CURL_VERSION=8.3.0-r0 \
+    && CURL_VERSION=8.4.0-r0 \
     && OPENSSL_VERSION=1.1.1w-r0 \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
@@ -228,6 +228,8 @@ RUN apk add --no-cache --virtual .curl curl \
     && rm /tmp/trivy \
     && :
 
+WORKDIR /var/lib/www
 USER httpd
+HEALTHCHECK --interval=10s --timeout=5s CMD netstat -ltn| grep 9000 > /dev/null || exit 1
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["/usr/local/sbin/php-fpm", "--nodaemonize", "--fpm-config", "/usr/local/etc/php-fpm.conf"]
