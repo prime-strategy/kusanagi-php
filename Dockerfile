@@ -38,7 +38,7 @@ RUN : \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && CURL_VERSIOH=8.4.0-r0 \
-    && OPENSSL_VERSION=3.1.4-r0 \
+    && OPENSSL_VERSION=3.1.4-r1 \
     && apk del --purge .user \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
@@ -119,7 +119,7 @@ RUN : \
         --with-jpeg \
         --with-xpm \
     && docker-php-ext-configure sockets CFLAGS="-D_GNU_SOURCE" \
-    && docker-php-ext-install \
+    && docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) \
         mysqli \
         pgsql \
         gd \
@@ -158,9 +158,27 @@ RUN : \
         && ./configure \
         && make -j$(getconf _NPROCESSORS_ONLN) install ) \
     && rm -rf ssh2-$PECL_SSH2_VERSION.tgz ssh2-$PECL_SSH2_VERSION \
-    && pecl install yaml-$PECL_YAML_VERSION \
-    && pecl install msgpack-$PECL_MSGPACK_VERSION \
-    && pecl install imagick-$PECL_IMAGICK_VERSION \
+    && pecl download yaml-$PECL_YAML_VERSION \
+    && tar xf yaml-$PECL_YAML_VERSION.tgz \
+    && (cd yaml-$PECL_YAML_VERSION \
+        && phpize \
+        && ./configure \
+        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
+    && rm -rf yaml-$PECL_YAML_VERSION.tgz yaml-$PECL_YAML_VERSION \
+    && pecl download msgpack-$PECL_MSGPACK_VERSION \
+    && tar xf msgpack-$PECL_MSGPACK_VERSION.tgz \
+    && (cd msgpack-$PECL_MSGPACK_VERSION \
+        && phpize \
+        && ./configure \
+        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
+    && rm -rf msgpack-$PECL_MSGPACK_VERSION.tgz msgpack-$PECL_MSGPACK_VERSION \
+    && pecl download imagick-$PECL_IMAGICK_VERSION \
+    && tar xf imagick-$PECL_IMAGICK_VERSION.tgz \
+    && (cd imagick-$PECL_IMAGICK_VERSION \
+        && phpize \
+        && ./configure \
+        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
+    && rm -rf imagick-$PECL_IMAGICK_VERSION.tgz imagick-$PECL_IMAGICK_VERSION \
     && pecl download redis-$PECL_REDIS_VERSION \
     && tar xf redis-$PECL_REDIS_VERSION.tgz \
     && (cd  redis-$PECL_REDIS_VERSION \
