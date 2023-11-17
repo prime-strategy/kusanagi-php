@@ -2,7 +2,7 @@
 PHP8.1 FastCGI Server ( for KUSANAGI Runs on Docker )
 
 ## Versions(tags)
-- php-8.1.25-r2
+- php-8.1.25-r3
 
 ## Image Content
 - php-8.1.25-fpm-alpine3.18
@@ -32,7 +32,6 @@ PHP8.1 FastCGI Server ( for KUSANAGI Runs on Docker )
 - gettext:8.1.25
 - hash:8.1.25
 - iconv:8.1.25
-- imagick:3.4.4
 - imap:2007f
 - intl:8.1.25
 - json:1.6.0
@@ -41,9 +40,9 @@ PHP8.1 FastCGI Server ( for KUSANAGI Runs on Docker )
 - mbstring:8.1.25
 - mysqli:5.0.12-dev
 - mysqlnd:8.1.25
-- openssl:1.1.1d
+- openssl:3.1.4
 - pcntl:8.1.25
-- pcre:8.41
+- pcre2:10.42
 - PDO:8.1.25
 - pdo_mysql:5.0.12-dev
 - pdo_pgsql:11.3
