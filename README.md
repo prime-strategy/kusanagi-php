@@ -2,7 +2,7 @@
 PHP8.2 FastCGI Server ( for KUSANAGI Runs on Docker )
 
 ## Versions(tags)
-- php-8.2.12-r2
+- php-8.2.12-r3
 
 ## Image Content
 - php-8.2.12-fpm-alpine3.18
@@ -21,7 +21,7 @@ PHP8.2 FastCGI Server ( for KUSANAGI Runs on Docker )
 - bz2:1.0.6
 - calendar:8.2.12
 - ctype:8.2.12
-- curl:7.65.1
+- curl:8.4.0
 - date:8.2.12
 - dom:20031129
 - exif:8.2.12
@@ -41,9 +41,9 @@ PHP8.2 FastCGI Server ( for KUSANAGI Runs on Docker )
 - mbstring:8.2.12
 - mysqli:5.0.12-dev
 - mysqlnd:8.2.12
-- openssl:1.1.1d
+- openssl:3.1.4
 - pcntl:8.2.12
-- pcre:8.41
+- pcre2:10.42
 - PDO:8.2.12
 - pdo_mysql:5.0.12-dev
 - pdo_pgsql:11.3
