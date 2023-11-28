@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.2.13
+ARG APP_VERSION=8.3.0
 ARG OS_VERSION=alpine3.18
 FROM --platform=$BUILDPLATFORM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
@@ -17,7 +17,7 @@ ARG PECL_IMAGICK_VERSION=3.7.0
 ARG PECL_REDIS_VERSION=6.0.2
 ARG PECL_XMLRPC_VERSION=1.0.0RC3
 
-ARG EXTENSION_VERSION=20220829
+ARG EXTENSION_VERSION=20230831
 
 COPY files/*.ini /usr/local/etc/php/conf.d/
 COPY files/opcache*.blacklist /usr/local/etc/php.d/
