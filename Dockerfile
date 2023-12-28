@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.3.0
+ARG APP_VERSION=8.3.1
 ARG OS_VERSION=alpine3.19
 FROM --platform=$BUILDPLATFORM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
@@ -26,6 +26,7 @@ COPY files/www.conf /usr/local/etc/php-fpm.d/www.conf.template
 COPY files/php-fpm.conf /usr/local/etc/php-fpm.conf
 COPY files/php.ini-production /usr/local/etc/php/php.ini
 COPY files/docker-entrypoint.sh /usr/local/bin
+COPY files/docker-healthcheck.sh /usr/local/bin
 
 # add user
 RUN cd /tmp \
@@ -256,5 +257,5 @@ RUN apk add --no-cache --virtual .curl curl \
 USER httpd
 WORKDIR /var/lib/www/
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
-HEALTHCHECK --interval=10s --timeout=5s CMD netstat -ltn| grep 9000 > /dev/null || exit 1
+HEALTHCHECK --interval=10s --timeout=5s CMD /usr/local/bin/docker-healthcheck.sh
 CMD ["/usr/local/sbin/php-fpm", "--nodaemonize", "--fpm-config", "/usr/local/etc/php-fpm.conf"]
