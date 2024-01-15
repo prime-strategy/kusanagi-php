@@ -38,7 +38,7 @@ RUN cd /tmp \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
     && CURL_VERSION=8.5.0-r0 \
-    && OPENSSL_VERSION=3.1.4-r2 \
+    && OPENSSL_VERSION=3.1.4-r3 \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         build-base \
