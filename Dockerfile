@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.2.14
+ARG APP_VERSION=8.2.15
 ARG OS_VERSION=alpine3.19
 FROM --platform=$BUILDPLATFORM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
@@ -38,7 +38,7 @@ RUN cd /tmp \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
     && CURL_VERSION=8.5.0-r0 \
-    && OPENSSL_VERSION=3.1.4-r3 \
+    && OPENSSL_VERSION=3.1.4-r4 \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         build-base \
