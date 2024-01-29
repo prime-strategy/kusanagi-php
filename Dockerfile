@@ -38,7 +38,7 @@ RUN cd /tmp \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
     && CURL_VERSION=8.5.0-r0 \
-    && OPENSSL_VERSION=3.1.4-r4 \
+    && OPENSSL_VERSION=3.1.4-r5 \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         build-base \
@@ -245,6 +245,7 @@ RUN cd /tmp \
     && php installer --filename=composer --install-dir=/usr/local/bin \
     && rm installer installer.sha384sum \
     && chown -R httpd:www /usr/local/etc \
+    && chown 755 /usr/local/bin/docker-entrypoint.sh /usr/local/bin/docker-healthcheck.sh \
     && :
 
 RUN apk add --no-cache --virtual .curl curl \
