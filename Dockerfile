@@ -1,8 +1,13 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.2.15
+ARG APP_VERSION=8.2.16
 ARG OS_VERSION=alpine3.19
+
+FROM --platform=$BUILDPLATFORM golang:1.21.7-${OS_VERSION} as build-go
+COPY files/localport_check.go /tmp
+RUN go build /tmp/localport_check.go
+
 FROM --platform=$BUILDPLATFORM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
 
@@ -26,7 +31,7 @@ COPY files/www.conf /usr/local/etc/php-fpm.d/www.conf.template
 COPY files/php-fpm.conf /usr/local/etc/php-fpm.conf
 COPY files/php.ini-production /usr/local/etc/php/php.ini
 COPY files/docker-entrypoint.sh /usr/local/bin
-COPY files/docker-healthcheck.sh /usr/local/bin
+COPY --from=build-go /go/localport_check /usr/local/bin
 
 # add user
 RUN cd /tmp \
@@ -245,7 +250,7 @@ RUN cd /tmp \
     && php installer --filename=composer --install-dir=/usr/local/bin \
     && rm installer installer.sha384sum \
     && chown -R httpd:www /usr/local/etc \
-    && chmod 755 /usr/local/bin/docker-entrypoint.sh /usr/local/bin/docker-healthcheck.sh \
+    && chmod 755 /usr/local/bin/docker-entrypoint.sh /usr/local/bin/localport_check \
     && :
 
 RUN apk add --no-cache --virtual .curl curl \
@@ -258,5 +263,5 @@ RUN apk add --no-cache --virtual .curl curl \
 USER httpd
 WORKDIR /var/lib/www/
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
-HEALTHCHECK --interval=10s --timeout=5s CMD /usr/local/bin/docker-healthcheck.sh
+HEALTHCHECK --interval=10s --timeout=5s CMD /usr/local/bin/localport_check
 CMD ["/usr/local/sbin/php-fpm", "--nodaemonize", "--fpm-config", "/usr/local/etc/php-fpm.conf"]
