@@ -46,6 +46,7 @@ RUN : \
     && OPENSSL_VERSION=3.1.4-r6 \
     && apk del --purge .user \
     && apk add --no-cache --virtual .build-php \
+        busybox=1.36.1-r16 \
         $PHPIZE_DEPS \
         build-base \
         automake \
