@@ -45,6 +45,7 @@ RUN cd /tmp \
     && CURL_VERSION=8.5.0-r0 \
     && OPENSSL_VERSION=3.1.4-r6 \
     && apk add --no-cache --virtual .build-php \
+        busybox=1.36.1-r16 \
         $PHPIZE_DEPS \
         build-base \
         automake \
