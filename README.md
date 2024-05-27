@@ -2,10 +2,10 @@
 PHP8.2 FastCGI Server ( for KUSANAGI Runs on Docker )
 
 ## Versions(tags)
-- php-8.2.19-r1
+- php-8.2.19-r2
 
 ## Image Content
-- php-8.2.19-fpm-alpine3.19
+- php-8.2.19-fpm-alpine3.20
 - acpu-5.1.23
 - imagick-3.7.0
 - msgpack-2.2.0
