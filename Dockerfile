@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.2.19
+ARG APP_VERSION=8.2.20
 ARG OS_VERSION=alpine3.20
 
 FROM --platform=$BUILDPLATFORM golang:1.21.10-${OS_VERSION} as build-go
@@ -43,7 +43,7 @@ RUN cd /tmp \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
     && CURL_VERSION=8.7.1-r0 \
-    && OPENSSL_VERSION=3.3.0-r2 \
+    && OPENSSL_VERSION=3.3.0-r3 \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         build-base \
