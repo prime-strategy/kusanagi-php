@@ -4,7 +4,7 @@
 ARG APP_VERSION=8.2.20
 ARG OS_VERSION=alpine3.20
 
-FROM --platform=$BUILDPLATFORM golang:1.21.11-${OS_VERSION} as build-go
+FROM --platform=$BUILDPLATFORM golang:1.21.11-${OS_VERSION} AS build-go
 COPY files/localport_check.go /tmp
 RUN go build /tmp/localport_check.go
 
@@ -42,8 +42,8 @@ RUN cd /tmp \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
-    && CURL_VERSION=8.7.1-r0 \
-    && OPENSSL_VERSION=3.3.1-r0 \
+    && CURL_VERSION=8.8.0-r0 \
+    && OPENSSL_VERSION=3.3.1-r1 \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         busybox=1.36.1-r29 \
@@ -245,11 +245,9 @@ RUN cd /tmp \
     && chown httpd:www /var/lib/php/session /var/lib/php/wsdlcache \
     && echo mysqli.default_socket=/var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-mysqli.ini \
     && echo pdo_mysql.default_socket = /var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-pdo_mysql.ini \
-    && curl -LO https://composer.github.io/installer.sha384sum \
     && curl -LO https://getcomposer.org/installer \
-    && sha3sum installer.sha384sum \
     && php installer --filename=composer --install-dir=/usr/local/bin \
-    && rm installer installer.sha384sum \
+    && rm installer \
     && chown -R httpd:www /usr/local/etc \
     && chmod 755 /usr/local/bin/docker-entrypoint.sh /usr/local/bin/localport_check \
     && :
