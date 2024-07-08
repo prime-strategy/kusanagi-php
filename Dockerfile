@@ -4,7 +4,7 @@
 ARG APP_VERSION=8.1.29
 ARG OS_VERSION=alpine3.20
 
-FROM --platform=$BUILDPLATFORM golang:1.21.11-${OS_VERSION} AS build-go
+FROM --platform=$BUILDPLATFORM golang:1.22.4-${OS_VERSION} AS build-go
 COPY files/localport_check.go /tmp
 RUN go build /tmp/localport_check.go
 
