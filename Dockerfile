@@ -1,10 +1,10 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.3.8
+ARG APP_VERSION=8.3.9
 ARG OS_VERSION=alpine3.20
 
-FROM --platform=$BUILDPLATFORM golang:1.21.11-${OS_VERSION} AS build-go
+FROM --platform=$BUILDPLATFORM golang:1.22.4-${OS_VERSION} AS build-go
 COPY files/localport_check.go /tmp
 RUN go build /tmp/localport_check.go
 
@@ -245,11 +245,9 @@ RUN cd /tmp \
     && chown httpd:www /var/lib/php/session /var/lib/php/wsdlcache \
     && echo mysqli.default_socket=/var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-mysqli.ini \
     && echo pdo_mysql.default_socket = /var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-pdo_mysql.ini \
-    && curl -LO https://composer.github.io/installer.sha384sum \
     && curl -LO https://getcomposer.org/installer \
-    && sha3sum installer.sha384sum \
     && php installer --filename=composer --install-dir=/usr/local/bin \
-    && rm installer installer.sha384sum \
+    && rm installer \
     && chown -R httpd:www /usr/local/etc \
     && chmod 755 /usr/local/bin/docker-entrypoint.sh /usr/local/bin/localport_check \
     && :
