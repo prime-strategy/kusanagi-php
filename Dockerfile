@@ -4,7 +4,7 @@
 ARG APP_VERSION=8.2.21
 ARG OS_VERSION=alpine3.20
 
-FROM --platform=$BUILDPLATFORM golang:1.22.4-${OS_VERSION} AS build-go
+FROM --platform=$BUILDPLATFORM golang:1.22.5-${OS_VERSION} AS build-go
 COPY files/localport_check.go /tmp
 RUN go build /tmp/localport_check.go
 
@@ -42,8 +42,8 @@ RUN cd /tmp \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
-    && CURL_VERSION=8.8.0-r0 \
-    && OPENSSL_VERSION=3.3.1-r1 \
+    && CURL_VERSION=8.9.0-r0 \
+    && OPENSSL_VERSION=3.3.1-r3 \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         busybox=1.36.1-r29 \
