@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.3.10
+ARG APP_VERSION=8.3.11
 ARG OS_VERSION=alpine3.20
 
 FROM --platform=$BUILDPLATFORM golang:1.22.5-${OS_VERSION} AS build-go
@@ -42,11 +42,10 @@ RUN cd /tmp \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
-    && CURL_VERSION=8.9.0-r0 \
+    && CURL_VERSION=8.9.1-r1 \
     && OPENSSL_VERSION=3.3.1-r3 \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
-        busybox=1.36.1-r29 \
         build-base \
         automake \
         cmake \
@@ -220,10 +219,13 @@ RUN cd /tmp \
             | grep -v jpeg \
             | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
     )" \
+    && curl -LO https://getcomposer.org/installer \
+    && php installer --filename=composer --install-dir=/usr/local/bin \
+    && rm installer \
     && apk del .gettext \
     && echo $runDeps \
     && apk add --no-cache --virtual .php-rundeps $runDeps imagemagick \
-    && apk del .build-php \
+    && apk del .build-php curl \
     && mv /tmp/envsubst /usr/bin/envsubst \
     && mv /tmp/mogrify /usr/bin \
     && rm -f /usr/local/etc/php/conf.d/docker-php-ext-apc.ini \
@@ -245,9 +247,6 @@ RUN cd /tmp \
     && chown httpd:www /var/lib/php/session /var/lib/php/wsdlcache \
     && echo mysqli.default_socket=/var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-mysqli.ini \
     && echo pdo_mysql.default_socket = /var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-pdo_mysql.ini \
-    && curl -LO https://getcomposer.org/installer \
-    && php installer --filename=composer --install-dir=/usr/local/bin \
-    && rm installer \
     && chown -R httpd:www /usr/local/etc \
     && chmod 755 /usr/local/bin/docker-entrypoint.sh /usr/local/bin/localport_check \
     && :
