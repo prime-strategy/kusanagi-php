@@ -4,7 +4,7 @@
 ARG APP_VERSION=8.1.29
 ARG OS_VERSION=alpine3.20
 
-FROM --platform=$BUILDPLATFORM golang:1.22.5-${OS_VERSION} AS build-go
+FROM --platform=$BUILDPLATFORM golang:1.22.6-${OS_VERSION} AS build-go
 COPY files/localport_check.go /tmp
 RUN go build /tmp/localport_check.go
 
@@ -42,7 +42,7 @@ RUN : \
     && groupadd -g 1000 kusanagi \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
-    && CURL_VERSIOH=8.9.0-r0 \
+    && CURL_VERSIOH=8.9.1-r1 \
     && OPENSSL_VERSION=3.3.1-r3 \
     && apk del --purge .user \
     && apk add --no-cache --virtual .build-php \
@@ -213,10 +213,13 @@ RUN : \
             | grep -v jpeg \
             | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
     )" \
+    && curl -sLO https://getcomposer.org/installer \
+    && php installer --filename=composer --install-dir=/usr/local/bin \
+    && rm installer \
     && apk del --purge .gettext \
     && echo $runDeps \
     && apk add --no-cache --virtual .php-rundeps $runDeps imagemagick \
-    && apk del --purge .build-php \
+    && apk del --purge .build-php curl \
     && mv /tmp/envsubst /usr/bin/envsubst \
     && mv /tmp/mogrify /usr/bin \
     && rm -f /usr/local/etc/php/conf.d/docker-php-ext-apc.ini \
@@ -238,9 +241,6 @@ RUN : \
     && chown httpd:www /var/lib/php/session /var/lib/php/wsdlcache \
     && echo mysqli.default_socket=/var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-mysqli.ini \
     && echo pdo_mysql.default_socket = /var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-pdo_mysql.ini \
-    && curl -sLO https://getcomposer.org/installer \
-    && php installer --filename=composer --install-dir=/usr/local/bin \
-    && rm installer \
     && chown -R httpd:www /usr/local/etc \
     && chmod 755 /usr/local/bin/docker-entrypoint.sh /usr/local/bin/localport_check \
     && :
