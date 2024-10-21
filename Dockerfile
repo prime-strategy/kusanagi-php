@@ -19,7 +19,7 @@ ARG PECL_YAML_VERSION=2.2.3
 ARG PECL_SSH2_VERSION=1.4.1
 ARG PECL_MSGPACK_VERSION=3.0.0
 ARG PECL_IMAGICK_VERSION=3.7.0
-ARG PECL_REDIS_VERSION=6.0.2
+ARG PECL_REDIS_VERSION=6.1.0
 ARG PECL_XMLRPC_VERSION=1.0.0RC3
 
 ARG EXTENSION_VERSION=20210902
@@ -43,7 +43,7 @@ RUN : \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && CURL_VERSIOH=8.10.1-r0 \
-    && OPENSSL_VERSION=3.3.2-r0 \
+    && OPENSSL_VERSION=3.3.2-r1 \
     && apk del --purge .user \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
