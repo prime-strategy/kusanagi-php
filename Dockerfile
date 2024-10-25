@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.3.12
+ARG APP_VERSION=8.3.13
 ARG OS_VERSION=alpine3.20
 
 FROM --platform=$BUILDPLATFORM golang:1.22.7-${OS_VERSION} AS build-go
@@ -15,7 +15,7 @@ LABEL maintainer=kusanagi@prime-strategy.co.jp
 ARG APCU_VERSION=5.1.24
 ARG MOZJPEG_VERSION=4.1.1
 ARG PECL_SODIUM_VERSION=2.0.23
-ARG PECL_YAML_VERSION=2.2.3
+ARG PECL_YAML_VERSION=2.2.4
 ARG PECL_SSH2_VERSION=1.4.1
 ARG PECL_MSGPACK_VERSION=3.0.0
 ARG PECL_IMAGICK_VERSION=3.7.0
@@ -26,7 +26,6 @@ ARG EXTENSION_VERSION=20230831
 
 COPY files/*.ini /usr/local/etc/php/conf.d/
 COPY files/opcache*.blacklist /usr/local/etc/php.d/
-COPY files/preload.php /usr/local/etc/php.d/
 COPY files/www.conf /usr/local/etc/php-fpm.d/www.conf.template
 COPY files/php-fpm.conf /usr/local/etc/php-fpm.conf
 COPY files/php.ini-production /usr/local/etc/php/php.ini
