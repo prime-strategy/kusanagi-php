@@ -9,8 +9,8 @@
 ; PHP attempts to find and load this configuration from a number of locations.
 ; The following is a summary of its search order:
 ; 1. SAPI module specific location.
-; 2. The PHPRC environment variable. (As of PHP 5.2.0)
-; 3. A number of predefined registry keys on Windows (As of PHP 5.2.0)
+; 2. The PHPRC environment variable.
+; 3. A number of predefined registry keys on Windows
 ; 4. Current working directory (except CLI)
 ; 5. The web server's directory (for SAPI modules), or directory of PHP
 ; (otherwise in Windows)
@@ -75,7 +75,7 @@
 
 ; php.ini-production contains settings which hold security, performance and
 ; best practices at its core. But please be aware, these settings may break
-; compatibility with older or less security conscience applications. We
+; compatibility with older or less security-conscious applications. We
 ; recommending using the production ini in production and testing environments.
 
 ; php.ini-development is very similar to its production variant, except it is
@@ -144,6 +144,11 @@
 ;   Development Value: 5
 ;   Production Value: 5
 
+; session.sid_length
+;   Default Value: 32
+;   Development Value: 26
+;   Production Value: 26
+
 ; short_open_tag
 ;   Default Value: On
 ;   Development Value: Off
@@ -154,17 +159,20 @@
 ;   Development Value: "GPCS"
 ;   Production Value: "GPCS"
 
+; zend.assertions
+;   Default Value: 1
+;   Development Value: 1
+;   Production Value: -1
+
 ; zend.exception_ignore_args
 ;   Default Value: Off
 ;   Development Value: Off
 ;   Production Value: On
-zend.exception_ignore_args = On
 
 ; zend.exception_string_param_max_len
 ;   Default Value: 15
 ;   Development Value: 15
 ;   Production Value: 0
-zend.exception_string_param_max_len = 0
 
 ;;;;;;;;;;;;;;;;;;;;
 ; php.ini Options  ;
@@ -400,7 +408,7 @@ zend.exception_string_param_max_len = 0
 ; threat in any way, but it makes it possible to determine whether you use PHP
 ; on your server or not.
 ; https://php.net/expose-php
-; expose_php = On
+;expose_php = On
 expose_php = Off
 
 ;;;;;;;;;;;;;;;;;;;
@@ -410,6 +418,7 @@ expose_php = Off
 ; Maximum execution time of each script, in seconds
 ; https://php.net/max-execution-time
 ; Note: This directive is hardcoded to 0 for the CLI SAPI
+;max_execution_time = 30
 max_execution_time = 120
 
 ; Maximum amount of time each script may spend parsing request data. It's a good
@@ -428,6 +437,11 @@ max_input_time = 60
 
 ; How many GET/POST/COOKIE input variables may be accepted
 ;max_input_vars = 1000
+
+; How many multipart body parts (combined input variable and file uploads) may
+; be accepted.
+; Default Value: -1 (Sum of max_input_vars and max_file_uploads)
+;max_multipart_body_parts = 1500
 
 ; Maximum amount of memory a script may consume
 ; https://php.net/memory-limit
@@ -453,7 +467,7 @@ memory_limit = 128M
 ; development and early testing.
 ;
 ; Error Level Constants:
-; E_ALL             - All errors and warnings (includes E_STRICT as of PHP 5.4.0)
+; E_ALL             - All errors and warnings
 ; E_ERROR           - fatal run-time errors
 ; E_RECOVERABLE_ERROR  - almost fatal run-time errors
 ; E_WARNING         - run-time warnings (non-fatal errors)
@@ -525,11 +539,6 @@ display_startup_errors = Off
 ; https://php.net/log-errors
 log_errors = On
 
-; Set maximum length of log_errors. In error_log information about the source is
-; added. The default is 1024 and 0 allows to not apply any maximum length at all.
-; http://php.net/log-errors-max-len
-log_errors_max_len = 1024
-
 ; Do not log repeated messages. Repeated errors must occur in same file on same
 ; line unless ignore_repeated_source is set true.
 ; https://php.net/ignore-repeated-errors
@@ -562,6 +571,7 @@ report_memleaks = On
 ; the error message is formatted as HTML or not.
 ; Note: This directive is hardcoded to Off for the CLI SAPI
 ; https://php.net/html-errors
+;html_errors = On
 html_errors = On
 
 ; If html_errors is set to On *and* docref_root is not empty, then PHP
@@ -705,6 +715,7 @@ auto_globals_jit = On
 ; Its value may be 0 to disable the limit. It is ignored if POST data reading
 ; is disabled through enable_post_data_reading.
 ; https://php.net/post-max-size
+;post_max_size = 8M
 post_max_size = 16M
 
 ; Automatically add files before PHP document.
@@ -858,7 +869,7 @@ file_uploads = On
 
 ; Maximum allowed size for uploaded files.
 ; https://php.net/upload-max-filesize
-; upload_max_filesize = 2M
+;upload_max_filesize = 2M
 upload_max_filesize = 16M
 
 ; Maximum number of files that can be uploaded via a single request
@@ -922,11 +933,17 @@ default_socket_timeout = 60
 ;
 ; Notes for Windows environments :
 ;
-; - Many DLL files are located in the extensions/ (PHP 4) or ext/ (PHP 5+)
-;   extension folders as well as the separate PECL DLL download (PHP 5+).
+; - Many DLL files are located in the ext/
+;   extension folders as well as the separate PECL DLL download.
 ;   Be sure to appropriately set the extension_dir directive.
 ;
 ;extension=bz2
+
+; The ldap extension must be before curl if OpenSSL 1.0.2 and OpenLDAP is used
+; otherwise it results in segfault when unloading after using SASL.
+; See https://github.com/php/php-src/issues/8620 for more info.
+;extension=ldap
+
 ;extension=curl
 ;extension=ffi
 ;extension=ftp
@@ -936,7 +953,6 @@ default_socket_timeout = 60
 ;extension=gmp
 ;extension=intl
 ;extension=imap
-;extension=ldap
 ;extension=mbstring
 ;extension=exif      ; Must be after mbstring as it depends on it
 ;extension=mysqli
@@ -963,6 +979,7 @@ default_socket_timeout = 60
 ;extension=sqlite3
 ;extension=tidy
 ;extension=xsl
+;extension=zip
 
 ;zend_extension=opcache
 
@@ -1104,7 +1121,12 @@ sendmail_path = /usr/sbin/sendmail -t -i
 ;mail.force_extra_parameters =
 
 ; Add X-PHP-Originating-Script: that will include uid of the script followed by the filename
+;mail.add_x_header = Off
 mail.add_x_header = On
+
+; Use mixed LF and CRLF line separators to keep compatibility with some
+; RFC 2822 non conformant MTA.
+mail.mixed_lf_and_crlf = Off
 
 ; The path to a log file that will log all mail() calls. Log entries include
 ; the full path of the script, line number, To address and headers.
@@ -1185,6 +1207,7 @@ mysqli.default_port = 3306
 ; Default socket name for local MySQL connects.  If empty, uses the built-in
 ; MySQL defaults.
 ; https://php.net/mysqli.default-socket
+;mysqli.default_socket =
 mysqli.default_socket = /var/run/mysqld/mysql.sock
 
 ; Default host for mysqli_connect() (doesn't apply in safe mode).
@@ -1202,9 +1225,6 @@ mysqli.default_user =
 ; file will be able to reveal the password as well.
 ; https://php.net/mysqli.default-pw
 mysqli.default_pw =
-
-; Allow or prevent reconnect
-mysqli.reconnect = Off
 
 ; If this option is enabled, closing a persistent connection will rollback
 ; any pending transactions of this connection, before it is put back
@@ -1271,7 +1291,7 @@ mysqlnd.collect_memory_statistics = Off
 ;oci8.ping_interval = 60
 
 ; Connection: Set this to a user chosen connection class to be used
-; for all pooled server requests with Oracle 11g Database Resident
+; for all pooled server requests with Oracle Database Resident
 ; Connection Pooling (DRCP).  To use DRCP, this value should be set to
 ; the same string for all web servers running the same application,
 ; the database pool must be configured, and the connection string must
@@ -1288,10 +1308,17 @@ mysqlnd.collect_memory_statistics = Off
 ; https://php.net/oci8.statement-cache-size
 ;oci8.statement_cache_size = 20
 
-; Tuning: Enables statement prefetching and sets the default number of
+; Tuning: Enables row prefetching and sets the default number of
 ; rows that will be fetched automatically after statement execution.
 ; https://php.net/oci8.default-prefetch
 ;oci8.default_prefetch = 100
+
+; Tuning: Sets the amount of LOB data that is internally returned from
+; Oracle Database when an Oracle LOB locator is initially retrieved as
+; part of a query. Setting this can improve performance by reducing
+; round-trips.
+; https://php.net/oci8.prefetch-lob-size
+; oci8.prefetch_lob_size = 0
 
 ; Compatibility. Using On means oci_close() will not close
 ; oci_connect() and oci_new_connect() connections.
@@ -1586,32 +1613,13 @@ session.sid_bits_per_character = 5
 ; -1: Do not compile at all
 ;  0: Jump over assertion at run-time
 ;  1: Execute assertions
-; Changing from or to a negative value is only possible in php.ini! (For turning assertions on and off at run-time, see assert.active, when zend.assertions = 1)
+; Changing from or to a negative value is only possible in php.ini!
+; (For turning assertions on and off at run-time, toggle zend.assertions between the values 1 and 0)
 ; Default Value: 1
 ; Development Value: 1
 ; Production Value: -1
 ; https://php.net/zend.assertions
 zend.assertions = -1
-
-; Assert(expr); active by default.
-; https://php.net/assert.active
-;assert.active = On
-
-; Throw an AssertionError on failed assertions
-; https://php.net/assert.exception
-;assert.exception = On
-
-; Issue a PHP warning for each failed assertion. (Overridden by assert.exception if active)
-; https://php.net/assert.warning
-;assert.warning = On
-
-; Don't bail out by default.
-; https://php.net/assert.bail
-;assert.bail = Off
-
-; User-function to be called if an assertion fails.
-; https://php.net/assert.callback
-;assert.callback = 0
 
 [COM]
 ; path to a file containing GUIDs, IIDs or filenames of files with TypeLibs
@@ -1845,10 +1853,6 @@ ldap.max_links = -1
 ; are cached.
 ;opcache.max_file_size=0
 
-; Check the cache checksum each N requests.
-; The default value of "0" means that the checks are disabled.
-;opcache.consistency_checks=0
-
 ; How long to wait (in seconds) for a scheduled restart to begin if the cache
 ; is not being accessed.
 ;opcache.force_restart_timeout=180
@@ -1900,8 +1904,13 @@ ldap.max_links = -1
 ;opcache.file_cache_fallback=1
 
 ; Enables or disables copying of PHP code (text segment) into HUGE PAGES.
-; This should improve performance, but requires appropriate OS configuration.
-;opcache.huge_code_pages=1
+; Under certain circumstances (if only a single global PHP process is
+; started from which all others fork), this can increase performance
+; by a tiny amount because TLB misses are reduced.  On the other hand, this
+; delays PHP startup, increases memory usage and degrades performance
+; under memory pressure - use with care.
+; Requires appropriate OS configuration.
+;opcache.huge_code_pages=0
 
 ; Validate cached file permissions.
 ;opcache.validate_permission=0
