@@ -42,7 +42,7 @@ RUN : \
     && groupadd -g 1000 kusanagi \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
-    && CURL_VERSIOH=8.11.0-r1 \
+    && CURL_VERSIOH=8.11.0-r2 \
     && OPENSSL_VERSION=3.3.2-r1 \
     && apk del --purge .user \
     && apk add --no-cache --virtual .build-php \
