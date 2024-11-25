@@ -1,10 +1,10 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.3.14
+ARG APP_VERSION=8.4.1
 ARG OS_VERSION=alpine3.20
 
-FROM --platform=$BUILDPLATFORM golang:1.22.7-${OS_VERSION} AS build-go
+FROM --platform=$BUILDPLATFORM golang:1.22.9-${OS_VERSION} AS build-go
 COPY files/localport_check.go /tmp
 RUN go build /tmp/localport_check.go
 
@@ -14,15 +14,16 @@ LABEL maintainer=kusanagi@prime-strategy.co.jp
 # Environment variable
 ARG APCU_VERSION=5.1.24
 ARG MOZJPEG_VERSION=4.1.1
-ARG PECL_SODIUM_VERSION=2.0.23
-ARG PECL_YAML_VERSION=2.2.4
-ARG PECL_SSH2_VERSION=1.4.1
-ARG PECL_MSGPACK_VERSION=3.0.0
 ARG PECL_IMAGICK_VERSION=3.7.0
+ARG PECL_IMAP_VERSION=1.0.3
+ARG PECL_MSGPACK_VERSION=3.0.0
+ARG PECL_SODIUM_VERSION=2.0.23
 ARG PECL_REDIS_VERSION=6.1.0
+ARG PECL_SSH2_VERSION=1.4.1
 ARG PECL_XMLRPC_VERSION=1.0.0RC3
+ARG PECL_YAML_VERSION=2.2.4
 
-ARG EXTENSION_VERSION=20230831
+ARG EXTENSION_VERSION=20240924
 
 COPY files/*.ini /usr/local/etc/php/conf.d/
 COPY files/opcache*.blacklist /usr/local/etc/php.d/
@@ -71,6 +72,7 @@ RUN cd /tmp \
         openldap-dev \
         imap-dev \
         icu-dev \
+        krb5-dev \
         curl=${CURL_VERSION} \
         curl-dev=${CURL_VERSION} \
         imagemagick \
@@ -129,7 +131,6 @@ RUN cd /tmp \
         gd \
         opcache \
         calendar \
-        imap \
         intl \
         ldap \
         bz2 \
@@ -148,6 +149,13 @@ RUN cd /tmp \
         xsl \
         tidy \
         ffi \
+    && pecl download apcu-$APCU_VERSION \
+    && tar xf apcu-$APCU_VERSION.tgz \
+    && (cd apcu-$APCU_VERSION \
+        && phpize \
+        && ./configure \
+        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
+    && rm -rf apcu-$APCU_VERSION.tgz apcu-$APCU_VERSION \
     && pecl download libsodium-$PECL_SODIUM_VERSION \
     && tar xf libsodium-$PECL_SODIUM_VERSION.tgz \
     && (cd libsodium-$PECL_SODIUM_VERSION \
@@ -155,6 +163,27 @@ RUN cd /tmp \
         && ./configure \
         && make -j$(getconf _NPROCESSORS_ONLN) install ) \
     && rm -rf libsodium-$PECL_SODIUM_VERSION.tgz libsodium-$PECL_SODIUM_VERSION \
+    && pecl download imagick-$PECL_IMAGICK_VERSION \
+    && tar xf imagick-$PECL_IMAGICK_VERSION.tgz \
+    && (cd imagick-$PECL_IMAGICK_VERSION \
+        && phpize \
+        && ./configure \
+        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
+    && rm -rf imagick-$PECL_IMAGICK_VERSION.tgz imagick-$PECL_IMAGICK_VERSION \
+    && pecl download imap-$PECL_IMAP_VERSION \
+    && tar xf imap-$PECL_IMAP_VERSION.tgz \
+    && (cd imap-$PECL_IMAP_VERSION \
+        && phpize \
+        && ./configure --with-kerberos --with-imap-ssl \
+        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
+    && rm -rf imap-$PECL_IMAP_VERSION.tgz imap-$PECL_IMAP_VERSION \
+    && pecl download msgpack-$PECL_MSGPACK_VERSION \
+    && tar xf msgpack-$PECL_MSGPACK_VERSION.tgz \
+    && (cd msgpack-$PECL_MSGPACK_VERSION \
+        && phpize \
+        && ./configure \
+        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
+    && rm -rf msgpack-$PECL_MSGPACK_VERSION.tgz msgpack-$PECL_MSGPACK_VERSION \
     && pecl download ssh2-$PECL_SSH2_VERSION \
     && tar xf ssh2-$PECL_SSH2_VERSION.tgz \
     && (cd ssh2-$PECL_SSH2_VERSION \
@@ -169,27 +198,6 @@ RUN cd /tmp \
         && ./configure \
         && make -j$(getconf _NPROCESSORS_ONLN) install ) \
     && rm -rf yaml-$PECL_YAML_VERSION.tgz yaml-$PECL_YAML_VERSION \
-    && pecl download apcu-$APCU_VERSION \
-    && tar xf apcu-$APCU_VERSION.tgz \
-    && (cd apcu-$APCU_VERSION \
-        && phpize \
-        && ./configure \
-        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
-    && rm -rf apcu-$APCU_VERSION.tgz apcu-$APCU_VERSION \
-    && pecl download msgpack-$PECL_MSGPACK_VERSION \
-    && tar xf msgpack-$PECL_MSGPACK_VERSION.tgz \
-    && (cd msgpack-$PECL_MSGPACK_VERSION \
-        && phpize \
-        && ./configure \
-        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
-    && rm -rf msgpack-$PECL_MSGPACK_VERSION.tgz msgpack-$PECL_MSGPACK_VERSION \
-    && pecl download imagick-$PECL_IMAGICK_VERSION \
-    && tar xf imagick-$PECL_IMAGICK_VERSION.tgz \
-    && (cd imagick-$PECL_IMAGICK_VERSION \
-        && phpize \
-        && ./configure \
-        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
-    && rm -rf imagick-$PECL_IMAGICK_VERSION.tgz imagick-$PECL_IMAGICK_VERSION \
     && pecl download redis-$PECL_REDIS_VERSION \
     && tar xf redis-$PECL_REDIS_VERSION.tgz \
     && (cd redis-$PECL_REDIS_VERSION \
