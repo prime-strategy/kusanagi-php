@@ -2,7 +2,7 @@
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
 ARG APP_VERSION=8.4.1
-ARG OS_VERSION=alpine3.20
+ARG OS_VERSION=alpine3.21
 
 FROM --platform=$BUILDPLATFORM golang:1.22.10-${OS_VERSION} AS build-go
 COPY files/localport_check.go /tmp
@@ -43,7 +43,7 @@ RUN cd /tmp \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
     && CURL_VERSION=8.11.1-r0 \
-    && OPENSSL_VERSION=3.3.2-r1 \
+    && OPENSSL_VERSION=3.3.2-r4 \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         build-base \
@@ -166,6 +166,7 @@ RUN cd /tmp \
     && pecl download imagick-$PECL_IMAGICK_VERSION \
     && tar xf imagick-$PECL_IMAGICK_VERSION.tgz \
     && (cd imagick-$PECL_IMAGICK_VERSION \
+        && sed -i 's/php_strtolower/zend_str_tolower/g' imagick.c \
         && phpize \
         && ./configure \
         && make -j$(getconf _NPROCESSORS_ONLN) install ) \
