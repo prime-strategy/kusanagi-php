@@ -41,8 +41,8 @@ RUN cd /tmp \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
-    && CURL_VERSION=8.12.0-r0 \
-    && OPENSSL_VERSION=3.3.2-r5 \
+    && CURL_VERSION=8.11.1-r1 \
+    && OPENSSL_VERSION=3.3.3-r0 \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         build-base \

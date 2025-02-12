@@ -27,8 +27,8 @@ jpegoptim-1.5.5-r0
 lcms2-2.16-r0
 libbsd-0.12.2-r0
 libbz2-1.0.8-r6
-libcrypto3-3.3.2-r5
-libcurl-8.12.0-r0
+libcrypto3-3.3.3-r0
+libcurl-8.11.1-r1
 libexpat-2.6.4-r0
 libffi-3.4.6-r0
 libgcc-14.2.0-r4
@@ -51,7 +51,7 @@ libsharpyuv-1.4.0-r0
 libsm-1.2.4-r4
 libsodium-1.0.20-r0
 libssh2-1.11.1-r0
-libssl3-3.3.2-r5
+libssl3-3.3.3-r0
 libstdc++-14.2.0-r4
 libunistring-1.2-r0
 libuuid-2.40.4-r0
@@ -73,7 +73,7 @@ musl-utils-1.2.5-r8
 ncurses-terminfo-base-6.5_p20241006-r3
 nghttp2-libs-1.64.0-r0
 oniguruma-6.9.9-r0
-openssl-3.3.2-r5
+openssl-3.3.3-r0
 optipng-0.7.8-r0
 pngquant-3.0.3-r0
 readline-8.2.13-r0
