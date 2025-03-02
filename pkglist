@@ -30,7 +30,7 @@ libbz2-1.0.8-r6
 libcrypto3-3.3.3-r0
 libcurl-8.12.1-r0
 libexpat-2.6.4-r0
-libffi-3.4.6-r0
+libffi-3.4.7-r0
 libgcc-14.2.0-r4
 libgcrypt-1.10.3-r1
 libgomp-14.2.0-r4
@@ -44,7 +44,7 @@ libltdl-2.4.7-r3
 libmd-1.1.0-r0
 libncursesw-6.5_p20241006-r3
 libpng-1.6.44-r0
-libpq-17.2-r0
+libpq-17.4-r0
 libpsl-0.21.5-r3
 libsasl-2.1.28-r8
 libsharpyuv-1.4.0-r0
