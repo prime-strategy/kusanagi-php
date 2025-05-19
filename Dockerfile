@@ -56,6 +56,7 @@ RUN cd /tmp \
         postgresql \
         postgresql-dev \
         gd-dev \
+        gmp-dev \
         libpng-dev \
         libwebp-dev \
         libxpm-dev \
@@ -127,6 +128,7 @@ RUN cd /tmp \
         mysqli \
         pgsql \
         gd \
+        gmp \
         opcache \
         calendar \
         imap \
