@@ -58,6 +58,7 @@ RUN : \
         postgresql \
         postgresql-dev \
         gd-dev \
+        gmp-dev \
         libpng-dev \
         libwebp-dev \
         libxpm-dev \
@@ -128,6 +129,7 @@ RUN : \
         mysqli \
         pgsql \
         gd \
+        gmp \
         opcache \
         calendar \
         imap \
