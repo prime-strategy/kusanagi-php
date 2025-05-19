@@ -57,6 +57,7 @@ RUN cd /tmp \
         postgresql \
         postgresql-dev \
         gd-dev \
+        gmp-dev \
         libpng-dev \
         libwebp-dev \
         libxpm-dev \
@@ -126,6 +127,7 @@ RUN cd /tmp \
         --with-xpm \
     && docker-php-ext-configure sockets CFLAGS="-D_GNU_SOURCE" \
     && docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) \
+        gmp \
         mysqli \
         pgsql \
         gd \

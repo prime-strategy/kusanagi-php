@@ -2,7 +2,7 @@
 PHP8.4 FastCGI Server ( for KUSANAGI Runs on Docker )
 
 ## Versions(tags)
-- php-8.4.7-r0
+- php-8.4.7-r1
 
 ## Image Content
 - php-8.4.7-fpm-alpine3.21
@@ -31,6 +31,7 @@ PHP8.4 FastCGI Server ( for KUSANAGI Runs on Docker )
 - ftp:8.4.7
 - gd:2.1.0
 - gettext:8.4.7
+- gmp:8.4.7
 - hash:8.4.7
 - iconv:8.4.7
 - imagick:3.4.4
