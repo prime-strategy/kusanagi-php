@@ -4,7 +4,7 @@
 ARG APP_VERSION=8.1.32
 ARG OS_VERSION=alpine3.21
 
-FROM --platform=$BUILDPLATFORM golang:1.24.2-${OS_VERSION} AS build-go
+FROM --platform=$BUILDPLATFORM golang:1.24.4-${OS_VERSION} AS build-go
 COPY files/localport_check.go /tmp
 RUN go build /tmp/localport_check.go
 
@@ -42,7 +42,7 @@ RUN : \
     && groupadd -g 1000 kusanagi \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
-    && CURL_VERSIOH=8.12.1-r1 \
+    && CURL_VERSION=8.12.1-r1 \
     && OPENSSL_VERSION=3.3.3-r0 \
     && apk del --purge .user \
     && apk add --no-cache --virtual .build-php \
@@ -81,8 +81,8 @@ RUN : \
         gettext \
         argon2-dev \
         coreutils \
-        curl=${CURL_VERSIOH} \
-        curl-dev=${CURL_VERSIOH} \
+        curl=${CURL_VERSION} \
+        curl-dev=${CURL_VERSION} \
         libjpeg-turbo-dev \
         libedit-dev \
         libxml2-dev \
