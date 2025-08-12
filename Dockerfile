@@ -4,7 +4,7 @@
 ARG APP_VERSION=8.4.10
 ARG OS_VERSION=alpine3.22
 
-FROM --platform=$BUILDPLATFORM golang:1.24.4-${OS_VERSION} AS build-go
+FROM --platform=$BUILDPLATFORM golang:1.24.6-${OS_VERSION} AS build-go
 COPY files/localport_check.go /tmp
 RUN go build /tmp/localport_check.go
 
@@ -262,10 +262,8 @@ RUN cd /tmp \
     && :
 
 
-RUN apk add --no-cache --virtual .curl curl \
-    && curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/master/contrib/install.sh | sh -s -- -b /tmp \
+RUN wget -q -O - https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /tmp \
     && /tmp/trivy filesystem --skip-files /tmp/trivy --exit-code 1 --no-progress / \
-    && apk del .curl \
     && rm /tmp/trivy \
     && :
 
