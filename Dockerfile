@@ -12,10 +12,10 @@ FROM --platform=$BUILDPLATFORM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
 
 # Environment variable
-ARG APCU_VERSION=5.1.24
+ARG APCU_VERSION=5.1.26
 ARG MOZJPEG_VERSION=4.1.1
 ARG PECL_SODIUM_VERSION=2.0.23
-ARG PECL_YAML_VERSION=2.2.4
+ARG PECL_YAML_VERSION=2.2.5
 ARG PECL_SSH2_VERSION=1.4.1
 ARG PECL_MSGPACK_VERSION=3.0.0
 ARG PECL_IMAGICK_VERSION=3.8.0
@@ -43,7 +43,7 @@ RUN : \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && CURL_VERSION=8.14.1-r1 \
-    && OPENSSL_VERSION=3.5.1-r0 \
+    && OPENSSL_VERSION=3.5.2-r0 \
     && apk del --purge .user \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
