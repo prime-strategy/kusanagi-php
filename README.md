@@ -2,11 +2,11 @@
 PHP8.4 FastCGI Server ( for KUSANAGI Runs on Docker )
 
 ## Versions(tags)
-- php-8.4.11-r1
+- php-8.4.11-r2
 
 ## Image Content
 - php-8.4.11-fpm-alpine3.22
-- acpu-5.1.24
+- acpu-5.1.26
 - imagick-3.8.0
 - imap-1.0.3
 - msgpack-3.0.0
@@ -14,7 +14,7 @@ PHP8.4 FastCGI Server ( for KUSANAGI Runs on Docker )
 - sodium-2.0.23
 - ssh2-1.4.1
 - xmlrpc:1.0.0RC3
-- yaml-2.2.4
+- yaml-2.2.5
 
 ## Image Content
 - php:8.4.11
