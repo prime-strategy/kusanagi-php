@@ -12,7 +12,7 @@ FROM --platform=$BUILDPLATFORM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
 
 # Environment variable
-ARG APCU_VERSION=5.1.26
+ARG APCU_VERSION=5.1.27
 ARG MOZJPEG_VERSION=4.1.1
 ARG PECL_SODIUM_VERSION=2.0.23
 ARG PECL_YAML_VERSION=2.2.5
@@ -42,7 +42,7 @@ RUN cd /tmp \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
     && CURL_VERSION=8.14.1-r1 \
-    && OPENSSL_VERSION=3.5.2-r0 \
+    && OPENSSL_VERSION=3.5.3-r1 \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         build-base \
