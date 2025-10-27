@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.4.13
+ARG APP_VERSION=8.4.14
 ARG OS_VERSION=alpine3.22
 
 FROM --platform=$BUILDPLATFORM golang:1.24.6-${OS_VERSION} AS build-go
