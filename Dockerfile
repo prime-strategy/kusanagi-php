@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.3.27
+ARG APP_VERSION=8.3.28
 ARG OS_VERSION=alpine3.22
 
 FROM --platform=$BUILDPLATFORM golang:1.25.4-${OS_VERSION} AS build-go
@@ -15,7 +15,7 @@ LABEL maintainer=kusanagi@prime-strategy.co.jp
 ARG APCU_VERSION=5.1.27
 ARG MOZJPEG_VERSION=4.1.1
 ARG PECL_SODIUM_VERSION=2.0.23
-ARG PECL_YAML_VERSION=2.2.5
+ARG PECL_YAML_VERSION=2.3.0
 ARG PECL_SSH2_VERSION=1.4.1
 ARG PECL_MSGPACK_VERSION=3.0.0
 ARG PECL_IMAGICK_VERSION=3.8.0
@@ -34,6 +34,7 @@ COPY --from=build-go /go/localport_check /usr/local/bin/localport_check
 
 # add user
 RUN cd /tmp \
+    && apk upgrade busybox --no-cache \
     && apk add --no-cache --virtual .user shadow \
     && groupadd -g 1001 www \
     && useradd -d /var/lib/www -s /bin/nologin -g www -M -u 1001 httpd \
