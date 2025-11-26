@@ -2,7 +2,7 @@
 PHP8.2 FastCGI Server ( for KUSANAGI Runs on Docker )
 
 ## Versions(tags)
-- php-8.2.29-r10
+- php-8.2.29-r11
 
 ## Image Content
 - php-8.2.29-fpm-alpine3.22
@@ -13,7 +13,7 @@ PHP8.2 FastCGI Server ( for KUSANAGI Runs on Docker )
 - sodium-2.0.23
 - ssh2-1.4.1
 - xmlrpc:1.0.0RC3
-- yaml-2.2.5
+- yaml-2.3.0
 
 ## Image Content
 - php:8.2.29
