@@ -2,9 +2,9 @@
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
 ARG APP_VERSION=8.4.15
-ARG OS_VERSION=alpine3.22
+ARG OS_VERSION=alpine3.23
 
-FROM --platform=$BUILDPLATFORM golang:1.25.4-${OS_VERSION} AS build-go
+FROM --platform=$BUILDPLATFORM golang:1.25.5-${OS_VERSION} AS build-go
 COPY files/localport_check.go /tmp
 RUN go build /tmp/localport_check.go
 
@@ -43,7 +43,7 @@ RUN cd /tmp \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
-    && CURL_VERSION=8.14.1-r2 \
+    && CURL_VERSION=8.17.0-r1 \
     && OPENSSL_VERSION=3.5.4-r0 \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
@@ -102,7 +102,7 @@ RUN cd /tmp \
     && tar xf mozjpeg-${MOZJPEG_VERSION}.tar.gz \
     && (cd mozjpeg-${MOZJPEG_VERSION} \
         && mkdir build && cd build \
-        && cmake -DCMAKE_INSTALL_PREFIX=/usr -DPNG_SUPPORTED=FALSE -DWITH_MEM_SRCDST=TRUE .. \
+        && cmake -DCMAKE_INSTALL_PREFIX=/usr -DPNG_SUPPORTED=FALSE -DWITH_MEM_SRCDST=TRUE -DCMAKE_POLICY_VERSION_MINIMUM=3.5 .. \
         && make -j$(getconf _NPROCESSORS_ONLN) install \
         && ls -l /usr/lib/libjpeg* \
         && strip \
