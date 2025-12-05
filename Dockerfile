@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.4.15
+ARG APP_VERSION=8.5.0
 ARG OS_VERSION=alpine3.23
 
 FROM --platform=$BUILDPLATFORM golang:1.25.5-${OS_VERSION} AS build-go
@@ -23,10 +23,11 @@ ARG PECL_SSH2_VERSION=1.4.1
 ARG PECL_XMLRPC_VERSION=1.0.0RC3
 ARG PECL_YAML_VERSION=2.3.0
 
-ARG EXTENSION_VERSION=20240924
+ARG EXTENSION_VERSION=20250925
 
+COPY files/use_zend_smart_string*.patch /tmp
 COPY files/*.ini /usr/local/etc/php/conf.d/
-COPY files/opcache*.blacklist /usr/local/etc/php.d/
+COPY files/opcache*.blacklist /usr/local/etc/php/
 COPY files/www.conf /usr/local/etc/php-fpm.d/www.conf.template
 COPY files/php-fpm.conf /usr/local/etc/php-fpm.conf
 COPY files/php.ini-production /usr/local/etc/php/php.ini
@@ -132,7 +133,6 @@ RUN cd /tmp \
         mysqli \
         pgsql \
         gd \
-        opcache \
         calendar \
         intl \
         ldap \
@@ -168,7 +168,8 @@ RUN cd /tmp \
     && rm -rf libsodium-$PECL_SODIUM_VERSION.tgz libsodium-$PECL_SODIUM_VERSION \
     && pecl download imagick-$PECL_IMAGICK_VERSION \
     && tar xf imagick-$PECL_IMAGICK_VERSION.tgz \
-    && (cd imagick-$PECL_IMAGICK_VERSION \
+    && (cd imagick-${PECL_IMAGICK_VERSION} \
+        && patch -p1 < /tmp/use_zend_smart_string_imagick.patch \
         && sed -i 's/php_strtolower/zend_str_tolower/g' imagick.c \
         && phpize \
         && ./configure \
@@ -205,6 +206,7 @@ RUN cd /tmp \
     && pecl download redis-$PECL_REDIS_VERSION \
     && tar xf redis-$PECL_REDIS_VERSION.tgz \
     && (cd redis-$PECL_REDIS_VERSION \
+        && patch -p1 < /tmp/use_zend_smart_string_redis.patch \
         && phpize \
         && ./configure  --enable-redis --enable-redis-msgpack --enable-redis-lzf \
         && make -j$(getconf _NPROCESSORS_ONLN) install ) \
