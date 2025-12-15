@@ -12,13 +12,13 @@ FROM --platform=$BUILDPLATFORM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
 
 # Environment variable
-ARG APCU_VERSION=5.1.27
+ARG APCU_VERSION=5.1.28
 ARG MOZJPEG_VERSION=4.1.1
 ARG PECL_IMAGICK_VERSION=3.8.0
 ARG PECL_IMAP_VERSION=1.0.3
 ARG PECL_MSGPACK_VERSION=3.0.0
 ARG PECL_SODIUM_VERSION=2.0.23
-ARG PECL_REDIS_VERSION=6.2.0
+ARG PECL_REDIS_VERSION=6.3.0
 ARG PECL_SSH2_VERSION=1.4.1
 ARG PECL_XMLRPC_VERSION=1.0.0RC3
 ARG PECL_YAML_VERSION=2.3.0
@@ -206,7 +206,6 @@ RUN cd /tmp \
     && pecl download redis-$PECL_REDIS_VERSION \
     && tar xf redis-$PECL_REDIS_VERSION.tgz \
     && (cd redis-$PECL_REDIS_VERSION \
-        && patch -p1 < /tmp/use_zend_smart_string_redis.patch \
         && phpize \
         && ./configure  --enable-redis --enable-redis-msgpack --enable-redis-lzf \
         && make -j$(getconf _NPROCESSORS_ONLN) install ) \
