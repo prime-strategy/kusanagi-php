@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.4.15
+ARG APP_VERSION=8.4.16
 ARG OS_VERSION=alpine3.23
 
 FROM --platform=$BUILDPLATFORM golang:1.25.5-${OS_VERSION} AS build-go
@@ -14,7 +14,7 @@ LABEL maintainer=kusanagi@prime-strategy.co.jp
 # Environment variable
 ARG APCU_VERSION=5.1.28
 ARG MOZJPEG_VERSION=4.1.1
-ARG PECL_IMAGICK_VERSION=3.8.0
+ARG PECL_IMAGICK_VERSION=3.8.1
 ARG PECL_IMAP_VERSION=1.0.3
 ARG PECL_MSGPACK_VERSION=3.0.0
 ARG PECL_SODIUM_VERSION=2.0.23
