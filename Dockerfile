@@ -1,7 +1,7 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.5.0
+ARG APP_VERSION=8.5.1
 ARG OS_VERSION=alpine3.23
 
 FROM --platform=$BUILDPLATFORM golang:1.25.5-${OS_VERSION} AS build-go
@@ -14,7 +14,7 @@ LABEL maintainer=kusanagi@prime-strategy.co.jp
 # Environment variable
 ARG APCU_VERSION=5.1.28
 ARG MOZJPEG_VERSION=4.1.1
-ARG PECL_IMAGICK_VERSION=3.8.0
+ARG PECL_IMAGICK_VERSION=3.8.1
 ARG PECL_IMAP_VERSION=1.0.3
 ARG PECL_MSGPACK_VERSION=3.0.0
 ARG PECL_SODIUM_VERSION=2.0.23
@@ -25,7 +25,6 @@ ARG PECL_YAML_VERSION=2.3.0
 
 ARG EXTENSION_VERSION=20250925
 
-COPY files/use_zend_smart_string*.patch /tmp
 COPY files/*.ini /usr/local/etc/php/conf.d/
 COPY files/opcache*.blacklist /usr/local/etc/php/
 COPY files/www.conf /usr/local/etc/php-fpm.d/www.conf.template
@@ -169,7 +168,6 @@ RUN cd /tmp \
     && pecl download imagick-$PECL_IMAGICK_VERSION \
     && tar xf imagick-$PECL_IMAGICK_VERSION.tgz \
     && (cd imagick-${PECL_IMAGICK_VERSION} \
-        && patch -p1 < /tmp/use_zend_smart_string_imagick.patch \
         && sed -i 's/php_strtolower/zend_str_tolower/g' imagick.c \
         && phpize \
         && ./configure \
