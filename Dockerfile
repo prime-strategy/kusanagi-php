@@ -34,7 +34,10 @@ COPY --from=build-go /go/localport_check /usr/local/bin/localport_check
 
 # add user
 RUN cd /tmp \
-    && apk upgrade busybox --no-cache \
+    && apk upgrade  --no-cache \
+        busybox \
+        openssl \
+        zlib \
     && apk add --no-cache --virtual .user shadow \
     && groupadd -g 1001 www \
     && useradd -d /var/lib/www -s /bin/nologin -g www -M -u 1001 httpd \
@@ -42,8 +45,6 @@ RUN cd /tmp \
     && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
     && chmod 755 /home/kusanagi \
     && apk del --purge .user \
-    && CURL_VERSION=8.17.0-r1 \
-    && OPENSSL_VERSION=3.5.5-r0 \
     && apk add --no-cache --virtual .build-php \
         $PHPIZE_DEPS \
         build-base \
@@ -73,8 +74,8 @@ RUN cd /tmp \
         openldap-dev \
         imap-dev \
         icu-dev \
-        curl=${CURL_VERSION} \
-        curl-dev=${CURL_VERSION} \
+        curl \
+        curl-dev \
         imagemagick \
         imagemagick-dev \
         libsodium \
@@ -85,8 +86,7 @@ RUN cd /tmp \
         libjpeg-turbo-dev \
         libedit-dev \
         libxml2-dev \
-        openssl=${OPENSSL_VERSION} \
-        openssl-dev=${OPENSSL_VERSION} \
+        openssl-dev \
         sqlite-dev \
         yaml-dev \
         libssh2-dev \
