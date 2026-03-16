@@ -1,10 +1,10 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.5.3
+ARG APP_VERSION=8.5.4
 ARG OS_VERSION=alpine3.23
 
-FROM --platform=$BUILDPLATFORM golang:1.25.7-${OS_VERSION} AS build-go
+FROM --platform=$BUILDPLATFORM golang:1.26.1-${OS_VERSION} AS build-go
 COPY files/localport_check.go /tmp
 RUN go build /tmp/localport_check.go
 
