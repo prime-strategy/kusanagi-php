@@ -36,6 +36,8 @@ COPY --from=build-go /go/localport_check /usr/local/bin/localport_check
 RUN cd /tmp \
     && apk upgrade  --no-cache \
         busybox \
+        musl \
+        musl-utils \
         openssl \
         zlib \
     && apk add --no-cache --virtual .user shadow \
