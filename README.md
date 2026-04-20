@@ -2,7 +2,7 @@
 PHP8.3 FastCGI Server ( for KUSANAGI Runs on Docker )
 
 ## Versions(tags)
-- php-8.3.30-r10
+- php-8.3.30-r11
 
 ## Image Content
 - php-8.3.30-fpm-alpine3.23
