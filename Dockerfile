@@ -160,13 +160,6 @@ RUN cd /tmp \
         && ./configure \
         && make -j$(getconf _NPROCESSORS_ONLN) install ) \
     && rm -rf apcu-$APCU_VERSION.tgz apcu-$APCU_VERSION \
-    && pecl download libsodium-$PECL_SODIUM_VERSION \
-    && tar xf libsodium-$PECL_SODIUM_VERSION.tgz \
-    && (cd libsodium-$PECL_SODIUM_VERSION \
-        && phpize \
-        && ./configure \
-        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
-    && rm -rf libsodium-$PECL_SODIUM_VERSION.tgz libsodium-$PECL_SODIUM_VERSION \
     && pecl download imagick-$PECL_IMAGICK_VERSION \
     && tar xf imagick-$PECL_IMAGICK_VERSION.tgz \
     && (cd imagick-${PECL_IMAGICK_VERSION} \
