@@ -153,13 +153,6 @@ RUN cd /tmp \
         xsl \
         tidy \
         ffi \
-    && pecl download libsodium-$PECL_SODIUM_VERSION \
-    && tar xf libsodium-$PECL_SODIUM_VERSION.tgz \
-    && (cd libsodium-$PECL_SODIUM_VERSION \
-        && phpize \
-        && ./configure \
-        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
-    && rm -rf libsodium-$PECL_SODIUM_VERSION.tgz libsodium-$PECL_SODIUM_VERSION \
     && pecl download ssh2-$PECL_SSH2_VERSION \
     && tar xf ssh2-$PECL_SSH2_VERSION.tgz \
     && (cd ssh2-$PECL_SSH2_VERSION \
