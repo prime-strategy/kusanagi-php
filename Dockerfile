@@ -14,7 +14,6 @@ LABEL maintainer=kusanagi@prime-strategy.co.jp
 # Environment variable
 ARG APCU_VERSION=5.1.28
 ARG MOZJPEG_VERSION=4.1.1
-ARG PECL_SODIUM_VERSION=2.0.23
 ARG PECL_YAML_VERSION=2.3.0
 ARG PECL_SSH2_VERSION=1.4.1
 ARG PECL_MSGPACK_VERSION=3.0.0
@@ -153,13 +152,6 @@ RUN cd /tmp \
         xsl \
         tidy \
         ffi \
-    && pecl download libsodium-$PECL_SODIUM_VERSION \
-    && tar xf libsodium-$PECL_SODIUM_VERSION.tgz \
-    && (cd libsodium-$PECL_SODIUM_VERSION \
-        && phpize \
-        && ./configure \
-        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
-    && rm -rf libsodium-$PECL_SODIUM_VERSION.tgz libsodium-$PECL_SODIUM_VERSION \
     && pecl download ssh2-$PECL_SSH2_VERSION \
     && tar xf ssh2-$PECL_SSH2_VERSION.tgz \
     && (cd ssh2-$PECL_SSH2_VERSION \
