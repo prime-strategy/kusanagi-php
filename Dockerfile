@@ -1,10 +1,10 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.3.30
+ARG APP_VERSION=8.3.31
 ARG OS_VERSION=alpine3.23
 
-FROM --platform=$BUILDPLATFORM golang:1.26.2-${OS_VERSION} AS build-go
+FROM --platform=$BUILDPLATFORM golang:1.26.3-${OS_VERSION} AS build-go
 COPY files/localport_check.go /tmp
 RUN go build /tmp/localport_check.go
 
@@ -14,7 +14,6 @@ LABEL maintainer=kusanagi@prime-strategy.co.jp
 # Environment variable
 ARG APCU_VERSION=5.1.28
 ARG MOZJPEG_VERSION=4.1.1
-ARG PECL_SODIUM_VERSION=2.0.23
 ARG PECL_YAML_VERSION=2.3.0
 ARG PECL_SSH2_VERSION=1.4.1
 ARG PECL_MSGPACK_VERSION=3.0.0
