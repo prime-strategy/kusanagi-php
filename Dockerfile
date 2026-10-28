@@ -1,14 +1,16 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.2.33
+ARG APP_VERSION=8.2.35
 ARG OS_VERSION=alpine3.24
+ARG TARGETOS TARGETARCH TARGETVARIANT
 
-FROM --platform=$BUILDPLATFORM golang:1.26.5-${OS_VERSION} AS build-go
+FROM --platform=$BUILDPLATFORM golang:1.26.10-${OS_VERSION} AS build-go
+ARG TARGETOS TARGETARCH
 COPY files/localport_check.go /tmp
-RUN go build /tmp/localport_check.go
+RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go build /tmp/localport_check.go
 
-FROM --platform=$BUILDPLATFORM php:${APP_VERSION}-fpm-${OS_VERSION}
+FROM php:${APP_VERSION}-fpm-${OS_VERSION}
 LABEL maintainer=kusanagi@prime-strategy.co.jp
 
 # Environment variable
@@ -247,10 +249,6 @@ RUN cd /tmp \
     && chmod 755 /usr/local/bin/docker-entrypoint.sh /usr/local/bin/localport_check \
     && :
 
-RUN wget -q -O - https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /tmp \
-    && /tmp/trivy filesystem --skip-files /tmp/trivy --exit-code 1 --no-progress / \
-    && rm /tmp/trivy \
-    && :
 
 USER httpd
 WORKDIR /var/lib/www/
