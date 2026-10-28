@@ -11,6 +11,7 @@ COPY files/localport_check.go /tmp
 RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go build /tmp/localport_check.go
 
 FROM php:${APP_VERSION}-fpm-${OS_VERSION}
+ARG  TARGETOS TARGETARCH TARGETVARIANT
 LABEL maintainer=kusanagi@prime-strategy.co.jp
 
 # Environment variable
@@ -99,6 +100,11 @@ RUN cd /tmp \
         libffi-dev \
         tar \
 # mozjpeg
+     && if [ "$TARGETARCH" = "amd64" ]; then \
+             LIB='lib64; \
+         else \
+             LIB='lib; \
+         fi \
     && curl -L https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz  -o mozjpeg-${MOZJPEG_VERSION}.tar.gz \
     && tar xf mozjpeg-${MOZJPEG_VERSION}.tar.gz \
     && (cd mozjpeg-${MOZJPEG_VERSION} \
@@ -113,10 +119,10 @@ RUN cd /tmp \
             /usr/bin/jpegtran \
             /usr/bin/djpeg \
             /usr/bin/tjbench \
-            /usr/lib64/libturbojpeg.so.0.2.0 \
-            /usr/lib64/libjpeg.so.62.3.0 \
-        && cp /usr/lib64/libturbojpeg.so.0.2.0 \
-            /usr/lib64/libjpeg.so.62.3.0 \
+            /usr/${LIB}/libturbojpeg.so.0.2.0 \
+            /usr/${LIB}/libjpeg.so.62.3.0 \
+        && cp /usr/${LIB}/libturbojpeg.so.0.2.0 \
+            /usr/${LIB}/libjpeg.so.62.3.0 \
             /tmp \
         && cp /usr/bin/mogrify /tmp ) \
 \
@@ -234,7 +240,7 @@ RUN cd /tmp \
     && rm -rf /tmp/mozjpeg* /tmp/pear /usr/include /usr/lib/pkgconfig /usr/lib/*a /usr/share/doc /usr/share/man \
     && apk add --no-cache pngquant optipng jpegoptim ssmtp \
     && chown httpd /etc/ssmtp /etc/ssmtp/ssmtp.conf \
-    && mv /tmp/libturbojpeg.so.0.2.0 /tmp/libjpeg.so.62.3.0 /usr/lib64 \
+    && mv /tmp/libturbojpeg.so.0.2.0 /tmp/libjpeg.so.62.3.0 /usr/${LIB} \
     && mkdir -p /etc/php.d/conf.d /etc/php-fpm.d \
     && cp /usr/local/etc/php/conf.d/* /etc/php.d/conf.d/ \
     && cp /usr/local/etc/php-fpm.d/* /etc/php-fpm.d/ \
