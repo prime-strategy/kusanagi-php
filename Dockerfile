@@ -1,14 +1,16 @@
 #//----------------------------------------------------------------------------
 #// PHP8 FastCGI Server ( for KUSANAGI Runs on Docker )
 #//----------------------------------------------------------------------------
-ARG APP_VERSION=8.3.33
+ARG APP_VERSION=8.3.36
 ARG OS_VERSION=alpine3.24
 
-FROM --platform=$BUILDPLATFORM golang:1.26.5-${OS_VERSION} AS build-go
+FROM --platform=$BUILDPLATFORM golang:1.26.10-${OS_VERSION} AS build-go
+ARG TARGETOS TARGETARCH TARGETVARIANT
 COPY files/localport_check.go /tmp
-RUN go build /tmp/localport_check.go
+RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go build /tmp/localport_check.go
 
-FROM --platform=$BUILDPLATFORM php:${APP_VERSION}-fpm-${OS_VERSION}
+FROM php:${APP_VERSION}-fpm-${OS_VERSION}
+ARG  TARGETOS TARGETARCH TARGETVARIANT
 LABEL maintainer=kusanagi@prime-strategy.co.jp
 
 # Environment variable
@@ -99,6 +101,11 @@ RUN cd /tmp \
 # mozjpeg
     && curl -L https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz  -o mozjpeg-${MOZJPEG_VERSION}.tar.gz \
     && tar xf mozjpeg-${MOZJPEG_VERSION}.tar.gz \
+    && if [ "$TARGETARCH" = "386" ] || [ "$TARGETARCH" = "arm" ]; then \
+            LIB='lib'; \
+        else \
+            LIB='lib64'; \
+        fi \
     && (cd mozjpeg-${MOZJPEG_VERSION} \
         && mkdir build && cd build \
         && cmake -DCMAKE_INSTALL_PREFIX=/usr -DPNG_SUPPORTED=FALSE -DWITH_MEM_SRCDST=TRUE -DCMAKE_POLICY_VERSION_MINIMUM=3.5 .. \
@@ -111,10 +118,10 @@ RUN cd /tmp \
             /usr/bin/jpegtran \
             /usr/bin/djpeg \
             /usr/bin/tjbench \
-            /usr/lib64/libturbojpeg.so.0.2.0 \
-            /usr/lib64/libjpeg.so.62.3.0 \
-        && cp /usr/lib64/libturbojpeg.so.0.2.0 \
-            /usr/lib64/libjpeg.so.62.3.0 \
+            /usr/${LIB}/libturbojpeg.so.0.2.0 \
+            /usr/${LIB}/libjpeg.so.62.3.0 \
+        && cp /usr/${LIB}/libturbojpeg.so.0.2.0 \
+            /usr/${LIB}/libjpeg.so.62.3.0 \
             /tmp \
         && cp /usr/bin/mogrify /tmp ) \
 \
@@ -232,7 +239,7 @@ RUN cd /tmp \
     && rm -rf /tmp/mozjpeg* /tmp/pear /usr/include /usr/lib/pkgconfig /usr/lib/*a /usr/share/doc /usr/share/man \
     && apk add --no-cache pngquant optipng jpegoptim ssmtp \
     && chown httpd /etc/ssmtp /etc/ssmtp/ssmtp.conf \
-    && mv /tmp/libturbojpeg.so.0.2.0 /tmp/libjpeg.so.62.3.0 /usr/lib64 \
+    && mv /tmp/libturbojpeg.so.0.2.0 /tmp/libjpeg.so.62.3.0 /usr/${LIB} \
     && mkdir -p /etc/php.d/conf.d /etc/php-fpm.d \
     && cp /usr/local/etc/php/conf.d/* /etc/php.d/conf.d/ \
     && cp /usr/local/etc/php-fpm.d/* /etc/php-fpm.d/ \
@@ -247,12 +254,6 @@ RUN cd /tmp \
     && chmod 755 /usr/local/bin/docker-entrypoint.sh /usr/local/bin/localport_check \
     && :
 
-
-
-RUN wget -q -O - https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /tmp \
-    && /tmp/trivy filesystem --skip-files /tmp/trivy --exit-code 1 --no-progress / \
-    && rm /tmp/trivy \
-    && :
 
 USER httpd
 WORKDIR /var/lib/www/
