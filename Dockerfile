@@ -100,10 +100,10 @@ RUN cd /tmp \
         libffi-dev \
         tar \
 # mozjpeg
-     && if [ "$TARGETARCH" = "amd64" ]; then \
-             LIB='lib64; \
+     && if [ "$TARGETARCH" = "386" ] || [ "$TARGETARCH" = "arm" ]; then \
+             LIB='lib'; \
          else \
-             LIB='lib; \
+             LIB='lib64'; \
          fi \
     && curl -L https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz  -o mozjpeg-${MOZJPEG_VERSION}.tar.gz \
     && tar xf mozjpeg-${MOZJPEG_VERSION}.tar.gz \
