@@ -5,62 +5,84 @@ ARG APP_VERSION=8.5.12
 ARG OS_VERSION=alpine3.24
 
 FROM --platform=$BUILDPLATFORM golang:1.26.10-${OS_VERSION} AS build-go
-ARG TARGETOS TARGETARCH
+ARG TARGETOS TARGETARCH TARGETVARIANT
 COPY files/localport_check.go /tmp
 RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go build /tmp/localport_check.go
 
-FROM php:${APP_VERSION}-fpm-${OS_VERSION}
-ARG  TARGETOS TARGETARCH TARGETVARIANT
-LABEL maintainer=kusanagi@prime-strategy.co.jp
-
-# Environment variable
+#//----------------------------------------------------------------------------
+#// PECL extensions build stage
+#//----------------------------------------------------------------------------
+FROM php:${APP_VERSION}-fpm-${OS_VERSION} AS build-pecl
 ARG APCU_VERSION=5.1.28
-ARG MOZJPEG_VERSION=4.1.1
-ARG PECL_IMAGICK_VERSION=3.8.1
-ARG PECL_IMAP_VERSION=1.0.3
-ARG PECL_MSGPACK_VERSION=3.0.1
-ARG PECL_SODIUM_VERSION=2.0.23
-ARG PECL_REDIS_VERSION=6.3.0
-ARG PECL_SSH2_VERSION=1.5.0
-ARG PECL_XMLRPC_VERSION=1.0.0RC3
 ARG PECL_YAML_VERSION=2.3.0
+ARG PECL_SSH2_VERSION=1.5.0
+ARG PECL_MSGPACK_VERSION=3.0.1
+ARG PECL_IMAGICK_VERSION=3.8.1
+ARG PECL_REDIS_VERSION=6.3.0
+ARG PECL_XMLRPC_VERSION=1.0.0RC3
+ARG PECL_IMAP_VERSION=1.0.3
+ARG PECL_SODIUM_VERSION=2.0.23
 
-ARG EXTENSION_VERSION=20250925
+WORKDIR /tmp/pecl
+RUN set -eux \
+    && apk add --no-cache \
+        $PHPIZE_DEPS \
+        imagemagick-dev \
+        imap-dev \
+        krb5-dev \
+        libssh2-dev \
+        libxml2-dev \
+        openssl-dev \
+        yaml-dev \
+    && pecl channel-update pecl.php.net \
+    && fetch_pecl() { \
+        name=$1; \
+        for i in 1 2 3 4 5; do \
+            pecl download "$name" && break; \
+            [ "$i" -eq 5 ] && return 1; \
+            echo "pecl download $name failed (attempt $i), retrying..."; \
+            sleep $((i * 5)); \
+        done \
+        && tar xf "$name.tgz"; \
+    } \
+    && build_pecl() { \
+        name=$1; shift; \
+        { [ -d "$name" ] || fetch_pecl "$name"; } \
+        && (cd "$name" \
+            && phpize \
+            && ./configure "$@" \
+            && make -j"$(getconf _NPROCESSORS_ONLN)" install ) \
+        && rm -rf "$name.tgz" "$name"; \
+    } \
+    && build_pecl ssh2-$PECL_SSH2_VERSION \
+    && build_pecl yaml-$PECL_YAML_VERSION \
+    && build_pecl apcu-$APCU_VERSION \
+# msgpack must be installed before redis (--enable-redis-msgpack needs its headers)
+    && build_pecl msgpack-$PECL_MSGPACK_VERSION \
+    && fetch_pecl imagick-$PECL_IMAGICK_VERSION \
+    && sed -i 's/php_strtolower/zend_str_tolower/g' imagick-$PECL_IMAGICK_VERSION/imagick.c \
+    && build_pecl imagick-$PECL_IMAGICK_VERSION \
+    && build_pecl imap-$PECL_IMAP_VERSION --with-kerberos --with-imap-ssl \
+    && build_pecl redis-$PECL_REDIS_VERSION --enable-redis --enable-redis-msgpack --enable-redis-lzf \
+    && build_pecl xmlrpc-$PECL_XMLRPC_VERSION \
+    && mkdir -p /pecl \
+    && extdir="$(php-config --extension-dir)" \
+    && for ext in ssh2 yaml apcu msgpack imagick imap redis xmlrpc; do \
+        strip "$extdir/$ext.so" && cp "$extdir/$ext.so" /pecl/; \
+    done
 
-COPY files/*.ini /usr/local/etc/php/conf.d/
-COPY files/opcache*.blacklist /usr/local/etc/php/
-COPY files/www.conf /usr/local/etc/php-fpm.d/www.conf.template
-COPY files/php-fpm.conf /usr/local/etc/php-fpm.conf
-COPY files/php.ini-production /usr/local/etc/php/php.ini
-COPY files/docker-entrypoint.sh /usr/local/bin
-COPY --from=build-go /go/localport_check /usr/local/bin/localport_check
-
-# add user
-RUN cd /tmp \
-    && apk upgrade --no-cache \
-        busybox \
-        musl \
-        musl-utils \
-        openssl \
-        zlib \
-    && apk add --no-cache --virtual .user shadow \
-    && groupadd -g 1001 www \
-    && useradd -d /var/lib/www -s /bin/nologin -g www -M -u 1001 httpd \
-    && groupadd -g 1000 kusanagi \
-    && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
-    && chmod 755 /home/kusanagi \
-    && apk del --purge .user \
-    && apk add --no-cache --virtual .build-php \
+#//----------------------------------------------------------------------------
+#// Core extensions build stage (runs in parallel with build-pecl)
+#//----------------------------------------------------------------------------
+FROM php:${APP_VERSION}-fpm-${OS_VERSION} AS build-core
+RUN set -eux \
+    && apk add --no-cache \
         $PHPIZE_DEPS \
         build-base \
         automake \
-        cmake \
         gettext \
         libtool \
-        nasm \
-        mariadb \
         mariadb-dev \
-        postgresql \
         postgresql-dev \
         gd-dev \
         gmp-dev \
@@ -72,21 +94,13 @@ RUN cd /tmp \
         freetype-dev \
         bzip2-dev \
         libexif-dev \
-        xmlrpc-c-dev \
         pcre-dev \
         gettext-dev \
         libxslt-dev \
         openldap-dev \
-        imap-dev \
         icu-dev \
-        krb5-dev \
-        curl \
         curl-dev \
-        imagemagick \
-        imagemagick-dev \
-        libsodium \
         libsodium-dev \
-        gettext \
         argon2-dev \
         coreutils \
         libjpeg-turbo-dev \
@@ -94,53 +108,20 @@ RUN cd /tmp \
         libxml2-dev \
         openssl-dev \
         sqlite-dev \
-        yaml-dev \
-        libssh2-dev \
         libgcrypt-dev \
         libgpg-error-dev \
         tidyhtml-dev \
         libffi-dev \
-        tar \
-# mozjpeg
-    && if [ "$TARGETARCH" = "386" ] || [ "$TARGETARCH" = "arm" ]; then \
-            LIB='lib'; \
-        else \
-            LIB='lib64'; \
-        fi \
-    && curl -L https://github.com/mozilla/mozjpeg/archive/v${MOZJPEG_VERSION}.tar.gz  -o mozjpeg-${MOZJPEG_VERSION}.tar.gz \
-    && tar xf mozjpeg-${MOZJPEG_VERSION}.tar.gz \
-    && (cd mozjpeg-${MOZJPEG_VERSION} \
-        && mkdir build && cd build \
-        && cmake -DCMAKE_INSTALL_PREFIX=/usr -DPNG_SUPPORTED=FALSE -DWITH_MEM_SRCDST=TRUE -DCMAKE_POLICY_VERSION_MINIMUM=3.5 .. \
-        && make -j$(getconf _NPROCESSORS_ONLN) install \
-        && ls -l /usr/lib/libjpeg* \
-        && strip \
-            /usr/bin/wrjpgcom \
-            /usr/bin/rdjpgcom \
-            /usr/bin/cjpeg \
-            /usr/bin/jpegtran \
-            /usr/bin/djpeg \
-            /usr/bin/tjbench \
-            /usr/${LIB}/libturbojpeg.so.0.2.0 \
-            /usr/${LIB}/libjpeg.so.62.3.0 \
-        && cp /usr/${LIB}/libturbojpeg.so.0.2.0 \
-            /usr/${LIB}/libjpeg.so.62.3.0 \
-            /tmp \
-        && cp /usr/bin/mogrify /tmp ) \
-\
-# PHP8.2
-\
-    && pecl channel-update pecl.php.net \
     && docker-php-ext-configure gd \
         --with-webp \
         --with-jpeg \
         --with-xpm \
     && docker-php-ext-configure sockets CFLAGS="-D_GNU_SOURCE" \
     && docker-php-ext-install -j$(getconf _NPROCESSORS_ONLN) \
-        gmp \
         mysqli \
         pgsql \
         gd \
+        gmp \
         calendar \
         intl \
         ldap \
@@ -160,95 +141,78 @@ RUN cd /tmp \
         xsl \
         tidy \
         ffi \
-    && pecl download apcu-$APCU_VERSION \
-    && tar xf apcu-$APCU_VERSION.tgz \
-    && (cd apcu-$APCU_VERSION \
-        && phpize \
-        && ./configure \
-        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
-    && rm -rf apcu-$APCU_VERSION.tgz apcu-$APCU_VERSION \
-    && pecl download imagick-$PECL_IMAGICK_VERSION \
-    && tar xf imagick-$PECL_IMAGICK_VERSION.tgz \
-    && (cd imagick-${PECL_IMAGICK_VERSION} \
-        && sed -i 's/php_strtolower/zend_str_tolower/g' imagick.c \
-        && phpize \
-        && ./configure \
-        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
-    && rm -rf imagick-$PECL_IMAGICK_VERSION.tgz imagick-$PECL_IMAGICK_VERSION \
-    && pecl download imap-$PECL_IMAP_VERSION \
-    && tar xf imap-$PECL_IMAP_VERSION.tgz \
-    && (cd imap-$PECL_IMAP_VERSION \
-        && phpize \
-        && ./configure --with-kerberos --with-imap-ssl \
-        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
-    && rm -rf imap-$PECL_IMAP_VERSION.tgz imap-$PECL_IMAP_VERSION \
-    && pecl download msgpack-$PECL_MSGPACK_VERSION \
-    && tar xf msgpack-$PECL_MSGPACK_VERSION.tgz \
-    && (cd msgpack-$PECL_MSGPACK_VERSION \
-        && phpize \
-        && ./configure \
-        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
-    && rm -rf msgpack-$PECL_MSGPACK_VERSION.tgz msgpack-$PECL_MSGPACK_VERSION \
-    && pecl download ssh2-$PECL_SSH2_VERSION \
-    && tar xf ssh2-$PECL_SSH2_VERSION.tgz \
-    && (cd ssh2-$PECL_SSH2_VERSION \
-        && phpize \
-        && ./configure \
-        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
-    && rm -rf ssh2-$PECL_SSH2_VERSION.tgz ssh2-$PECL_SSH2_VERSION \
-    && pecl download yaml-$PECL_YAML_VERSION \
-    && tar xf yaml-$PECL_YAML_VERSION.tgz \
-    && (cd yaml-$PECL_YAML_VERSION \
-        && phpize \
-        && ./configure \
-        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
-    && rm -rf yaml-$PECL_YAML_VERSION.tgz yaml-$PECL_YAML_VERSION \
-    && pecl download redis-$PECL_REDIS_VERSION \
-    && tar xf redis-$PECL_REDIS_VERSION.tgz \
-    && (cd redis-$PECL_REDIS_VERSION \
-        && phpize \
-        && ./configure  --enable-redis --enable-redis-msgpack --enable-redis-lzf \
-        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
-    && rm -rf redis-$PECL_REDIS_VERSION.tgz redis-$PECL_REDIS_VERSION \
-    && pecl download xmlrpc-$PECL_XMLRPC_VERSION \
-    && tar xf xmlrpc-$PECL_XMLRPC_VERSION.tgz \
-    && (cd xmlrpc-$PECL_XMLRPC_VERSION \
-        && phpize \
-        && ./configure \
-        && make -j$(getconf _NPROCESSORS_ONLN) install ) \
-    && rm -rf xmlrpc-$PECL_XMLRPC_VERSION.tgz xmlrpc-$PECL_XMLRPC_VERSION \
-    && docker-php-source delete \
-    && docker-php-ext-enable sodium ssh2 yaml apcu msgpack imagick redis xmlrpc \
-    && strip /usr/local/lib/php/extensions/no-debug-non-zts-${EXTENSION_VERSION}/*.so \
+# docker-php-ext-install strips the modules and writes docker-php-ext-*.ini
+    && mkdir -p /out/conf.d \
+    && cp -a "$(php-config --extension-dir)" /out/extensions \
+    && cp /usr/local/etc/php/conf.d/docker-php-ext-*.ini /out/conf.d/ \
+# not copied: ffi/opcache are loaded by files/20-ffi.ini and files/10-opcache.ini,
+# sodium is already enabled in the base image
+    && rm -f /out/conf.d/docker-php-ext-ffi.ini \
+        /out/conf.d/docker-php-ext-opcache.ini \
+        /out/conf.d/docker-php-ext-sodium.ini
+
+#//----------------------------------------------------------------------------
+#// Final image
+#//----------------------------------------------------------------------------
+FROM php:${APP_VERSION}-fpm-${OS_VERSION}
+ARG  TARGETOS TARGETARCH TARGETVARIANT
+LABEL maintainer=kusanagi@prime-strategy.co.jp
+
+ARG EXTENSION_VERSION=20250925
+
+COPY files/*.ini /usr/local/etc/php/conf.d/
+COPY files/opcache*.blacklist /usr/local/etc/php/
+COPY files/www.conf /usr/local/etc/php-fpm.d/www.conf.template
+COPY files/php-fpm.conf /usr/local/etc/php-fpm.conf
+COPY files/php.ini-production /usr/local/etc/php/php.ini
+COPY files/docker-entrypoint.sh /usr/local/bin
+COPY --from=build-go /go/localport_check /usr/local/bin/localport_check
+COPY --from=build-core /out/extensions/ /usr/local/lib/php/extensions/no-debug-non-zts-${EXTENSION_VERSION}/
+COPY --from=build-core /out/conf.d/ /usr/local/etc/php/conf.d/
+COPY --from=build-pecl /pecl/*.so /usr/local/lib/php/extensions/no-debug-non-zts-${EXTENSION_VERSION}/
+
+# add user
+RUN cd /tmp \
+    && apk upgrade  --no-cache \
+        busybox \
+        musl \
+        musl-utils \
+        openssl \
+        zlib \
+    && apk add --no-cache --virtual .user shadow \
+    && groupadd -g 1001 www \
+    && useradd -d /var/lib/www -s /bin/nologin -g www -M -u 1001 httpd \
+    && groupadd -g 1000 kusanagi \
+    && useradd -d /home/kusanagi -s /bin/nologin -g kusanagi -G www -u 1000 -m kusanagi \
+    && chmod 755 /home/kusanagi \
+    && apk del --purge .user \
+# runtime dependencies of php, the extensions and envsubst
     && apk add --no-cache --virtual .gettext gettext \
     && mv /usr/bin/envsubst /tmp/ \
     && runDeps="$( \
         scanelf --needed --nobanner --format '%n#p' /usr/local/bin/php \
             /usr/local/sbin/php-fpm /usr/local/lib/php/extensions/no-debug-non-zts-${EXTENSION_VERSION}/*.so \
-            /tmp/mogrify /tmp/envsubst \
+            /tmp/envsubst \
             | tr ',' '\n' \
             | sort -u \
-            | grep -v jpeg \
             | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
     )" \
-    && curl -LO https://getcomposer.org/installer \
+    && echo $runDeps \
+    && apk add --no-cache --virtual .php-rundeps $runDeps imagemagick libjpeg-turbo-utils \
+    && apk del .gettext \
+    && mv /tmp/envsubst /usr/bin/envsubst \
+    && docker-php-ext-enable sodium ssh2 yaml apcu msgpack imagick imap redis xmlrpc \
+    && curl --retry 5 --retry-delay 5 --retry-all-errors -LO https://getcomposer.org/installer \
     && php installer --filename=composer --install-dir=/usr/local/bin \
     && rm installer \
-    && apk del .gettext \
-    && echo $runDeps \
-    && apk add --no-cache --virtual .php-rundeps $runDeps imagemagick \
-    && apk del .build-php curl \
-    && mv /tmp/envsubst /usr/bin/envsubst \
-    && mv /tmp/mogrify /usr/bin \
+    && apk del curl \
     && rm -f /usr/local/etc/php/conf.d/docker-php-ext-apc.ini \
     && rm -f /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini \
-    && rm -f /usr/local/etc/php/conf.d/docker-php-ext-ffi.ini \
     && rm -f /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini \
     && rm -f /usr/local/etc/php/conf.d/docker-fpm.ini \
-    && rm -rf /tmp/mozjpeg* /tmp/pear /usr/include /usr/lib/pkgconfig /usr/lib/*a /usr/share/doc /usr/share/man \
+    && rm -rf /tmp/pear /usr/include /usr/lib/pkgconfig /usr/lib/*a /usr/share/doc /usr/share/man \
     && apk add --no-cache pngquant optipng jpegoptim ssmtp \
     && chown httpd /etc/ssmtp /etc/ssmtp/ssmtp.conf \
-    && mv /tmp/libturbojpeg.so.0.2.0 /tmp/libjpeg.so.62.3.0 /usr/${LIB} \
     && mkdir -p /etc/php.d/conf.d /etc/php-fpm.d \
     && cp /usr/local/etc/php/conf.d/* /etc/php.d/conf.d/ \
     && cp /usr/local/etc/php-fpm.d/* /etc/php-fpm.d/ \
