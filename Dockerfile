@@ -255,7 +255,6 @@ RUN cd /tmp \
     && chmod 755 /usr/local/bin/docker-entrypoint.sh /usr/local/bin/localport_check \
     && :
 
-
 USER httpd
 WORKDIR /var/lib/www/
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
