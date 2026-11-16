@@ -4,7 +4,7 @@ PHP8.2 FastCGI Server ( for KUSANAGI Runs on Docker )
 
 ## Versions(tags)
 
-- 8.2.35-r1
+- 8.2.35-r2
 
 ## Image Content
 
